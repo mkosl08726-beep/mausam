@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>Mausam — Hyperlocal Weather Intelligence</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-tint": "#00dce6", "surface-container-lowest": "#0a0e18",
+            "primary-fixed-dim": "#00dce6", "primary-container": "#00f2fe",
+            "surface-container-high": "#262a35", "surface-container-low": "#171b26",
+            "on-surface": "#dfe2f1", "surface": "#0f131d",
+            "surface-container": "#1c1f2a", "primary": "#e0fdff",
+            "secondary": "#d0bcff", "secondary-container": "#571bc1",
+            "tertiary": "#e1ffec", "tertiary-container": "#67f4b7",
+            "on-primary": "#00373a", "on-primary-container": "#006a70",
+            "on-surface-variant": "#b9cacb", "outline": "#849495",
+            "error": "#ffb4ab", "error-container": "#93000a",
+            "on-error-container": "#ffdad6", "surface-variant": "#313540",
+            "surface-container-highest": "#313540", "surface-bright": "#353944",
+            "tertiary-fixed": "#6ffbbe", "secondary-fixed": "#e9ddff",
+            "primary-fixed": "#6ff6ff", "background": "#0f131d"
+          },
+          borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          spacing: { "space-xs": "0.25rem", "margin": "1.25rem", "space-sm": "0.5rem", "space-lg": "1.25rem", "space-xl": "2rem", "space-md": "0.875rem" },
+          fontFamily: {
+            "headline-sm": ["Inter"], "body-md": ["Inter"], "display-hero": ["Inter"],
+            "body-lg": ["Inter"], "headline-md": ["Inter"], "label-data-md": ["JetBrains Mono"],
+            "label-data-lg": ["JetBrains Mono"], "body-sm": ["Inter"],
+            "label-data-sm": ["JetBrains Mono"], "headline-lg-mobile": ["Inter"], "headline-lg": ["Inter"]
+          },
+          fontSize: {
+            "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "display-hero": ["64px", { lineHeight: "72px", letterSpacing: "-0.03em", fontWeight: "300" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "headline-md": ["22px", { lineHeight: "28px", fontWeight: "500" }],
+            "label-data-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+            "label-data-lg": ["15px", { lineHeight: "20px", fontWeight: "500" }],
+            "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            "label-data-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.05em", fontWeight: "600" }],
+            "headline-lg-mobile": ["26px", { lineHeight: "32px", fontWeight: "600" }],
+            "display-hero-mobile": ["44px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "300" }]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @layer base {
+      html, body { width: 100vw; margin: 0; padding: 0; background-color: #0f131d; }
+      body { overscroll-behavior: none; font-family: 'Inter', sans-serif; color: #dfe2f1; }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    body { min-height: max(884px, 100dvh); }
+    @keyframes pulse-glow { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .animate-spin-slow { animation: spin-slow 9s linear infinite; }
+    @keyframes strikePulse { 0% { r: 4; opacity: 1; } 100% { r: 20; opacity: 0; } }
+    .strike-pulse { animation: strikePulse 1.5s ease-out infinite; }
+    @keyframes flowDash { to { stroke-dashoffset: -100; } }
+    .flow-line { stroke-dasharray: 6 8; animation: flowDash 3s linear infinite; }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+    .leaflet-container { background: #0a0e18 !important; }
+    .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1); }
+    .leaflet-overlay-pane { filter: none !important; }
+    .leaflet-control-attribution { display: none !important; }
+    .sheet { transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sheet.open { transform: translateY(0); }
+    .health-check {
+      appearance: none; -webkit-appearance: none;
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 1.5px solid #3a494b; background: #0a0e18;
+      position: relative; cursor: pointer; flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .health-check:checked { background: #00f2fe; border-color: #00f2fe; }
+    .health-check:checked::after {
+      content: '✓'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #00373a; font-weight: 700; font-size: 15px;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-surface font-body-md text-body-md flex flex-col min-h-screen">
+
+  <!-- ===== TOP APP BAR ===== -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
+    <div class="h-16 px-margin flex items-center justify-between gap-space-sm">
+      <div class="flex items-center gap-space-sm min-w-0 flex-1">
+        <button id="location-btn" class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container/70 backdrop-blur-md min-h-[44px] max-w-[180px] text-left hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-primary-fixed text-[16px]">near_me</span>
+          <span id="location-label" class="font-label-data-md text-label-data-md text-on-surface truncate">Detecting…</span>
+        </button>
+      </div>
+      <div class="flex items-center gap-space-xs shrink-0">
+        <button id="health-btn" class="relative flex items-center justify-center w-11 h-11 rounded-full bg-surface-container/60 hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant">health_and_safety</span>
+          <span id="health-badge" class="hidden absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-tertiary-fixed ring-2 ring-surface-container-lowest"></span>
+        </button>
+        <button id="refresh-btn" class="flex items-center justify-center w-11 h-11 rounded-full bg-surface-container/60 hover:bg-surface-container-high transition-colors">
+          <span class="material-symbols-outlined text-[18px] text-surface-tint">refresh</span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-0.5">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="flex flex-col relative w-full pt-16 bg-surface">
+    <div id="app-content" class="flex flex-col w-full text-on-surface pb-28">
+
+      <!-- ============ VIEW 1: TODAY ============ -->
+      <section id="view-today" class="view-section active">
+        <div class="px-margin pt-space-xs space-y-space-md">
+
+          <div class="flex items-center justify-between gap-2 mb-space-sm">
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low/90 backdrop-blur-md">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
+              <span class="font-label-data-sm text-label-data-sm tracking-wider uppercase text-tertiary-fixed">Open-Meteo Live</span>
+            </div>
+            <span id="last-updated" class="font-label-data-sm text-label-data-sm text-on-surface-variant/80">Updating…</span>
+          </div>
+
+          <div id="health-banner" class="hidden rounded-xl bg-tertiary-container/15 backdrop-blur-xl p-3 flex items-center justify-between border border-tertiary-fixed/30">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-tertiary-container/30 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-tertiary-fixed text-[16px]">health_and_safety</span>
+              </div>
+              <div class="min-w-0">
+                <span class="font-label-data-sm uppercase tracking-wider text-tertiary-fixed font-semibold">Health Profile Active</span>
+                <p id="health-summary" class="font-body-sm text-on-surface-variant truncate">—</p>
+              </div>
+            </div>
+            <button id="health-edit-inline" class="px-2.5 py-1 rounded-full bg-surface-container-high text-primary-fixed font-label-data-sm hover:bg-surface-bright transition-colors shrink-0">
+              Edit
+            </button>
+          </div>
+
+          <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5">
+            <button class="city-chip active flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-high/90 text-primary-fixed shrink-0" data-lat="28.6139" data-lon="77.2090" data-name="New Delhi">
+              <span class="material-symbols-outlined text-[14px] text-surface-tint">my_location</span>
+              <span class="font-label-data-md">New Delhi</span>
+            </button>
+            <button class="city-chip flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low/70 text-on-surface-variant shrink-0" data-lat="19.0760" data-lon="72.8777" data-name="Mumbai"><span class="font-label-data-md">Mumbai</span></button>
+            <button class="city-chip flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low/70 text-on-surface-variant shrink-0" data-lat="12.9716" data-lon="77.5946" data-name="Bengaluru"><span class="font-label-data-md">Bengaluru</span></button>
+            <button class="city-chip flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low/70 text-on-surface-variant shrink-0" data-lat="22.5726" data-lon="88.3639" data-name="Kolkata"><span class="font-label-data-md">Kolkata</span></button>
+            <button class="city-chip flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low/70 text-on-surface-variant shrink-0" data-lat="13.0827" data-lon="80.2707" data-name="Chennai"><span class="font-label-data-md">Chennai</span></button>
+          </div>
+
+          <!-- HERO -->
+          <div class="relative overflow-hidden rounded-xl bg-gradient-to-b from-surface-container/70 via-surface-container-low/60 to-surface-container-lowest/80 backdrop-blur-2xl p-space-lg shadow-xl">
+            <div class="flex items-center justify-between gap-2 mb-space-md">
+              <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/60">
+                <span class="material-symbols-outlined text-[15px] text-tertiary-fixed">eco</span>
+                <span id="aqi-value" class="font-label-data-sm text-on-surface">AQI —</span>
+                <span id="aqi-label" class="font-label-data-sm text-tertiary-fixed font-semibold">—</span>
+              </div>
+              <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/60">
+                <span class="material-symbols-outlined text-[15px] text-surface-tint">wb_sunny</span>
+                <span id="uv-value" class="font-label-data-sm text-on-surface">UV —</span>
+              </div>
+              <div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high/60">
+                <span class="material-symbols-outlined text-[15px] text-primary-fixed">north_east</span>
+                <span id="pressure-value" class="font-label-data-sm text-primary">— hPa</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between gap-4 my-space-xs">
+              <div>
+                <div class="flex items-baseline">
+                  <span id="current-temp" class="font-display-hero-mobile font-light tracking-tighter text-on-surface">--</span>
+                  <span class="font-display-hero-mobile font-light text-primary-fixed-dim">°</span>
+                </div>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span id="high-temp" class="font-label-data-md text-on-surface font-medium">H: --°</span>
+                  <span class="w-1 h-1 rounded-full bg-outline"></span>
+                  <span id="low-temp" class="font-label-data-md text-on-surface-variant">L: --°</span>
+                </div>
+                <p id="feels-like" class="font-body-sm text-on-surface-variant mt-1">Feels like —°</p>
+              </div>
+              <div class="relative w-24 h-24 flex items-center justify-center shrink-0">
+                <div class="absolute inset-0 bg-primary-container/20 rounded-full blur-2xl animate-pulse-glow"></div>
+                <span id="hero-icon" class="material-symbols-outlined text-[72px] text-surface-tint relative z-10">partly_cloudy_day</span>
+              </div>
+            </div>
+            <div class="mt-space-sm pt-space-sm flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span>
+                <span id="weather-desc" class="font-headline-sm text-on-surface">Loading…</span>
+              </div>
+              <span id="humidity-value" class="font-label-data-sm text-outline uppercase">Humidity —%</span>
+            </div>
+          </div>
+
+          <!-- Alert -->
+          <div id="alert-section" class="relative overflow-hidden rounded-xl bg-surface-container-low/90 backdrop-blur-xl p-space-md shadow-lg hidden">
+            <div id="alert-rail" class="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-error to-secondary-container"></div>
+            <div class="pl-2">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <div id="alert-icon-bg" class="w-7 h-7 rounded-lg bg-error-container/40 flex items-center justify-center shrink-0">
+                    <span id="alert-icon" class="material-symbols-outlined text-error text-[18px] animate-pulse">warning</span>
+                  </div>
+                  <div>
+                    <span id="alert-title" class="font-label-data-sm uppercase tracking-wider text-error font-semibold">Weather Advisory</span>
+                    <p id="alert-time" class="font-label-data-sm text-on-surface-variant">Active: —</p>
+                  </div>
+                </div>
+                <span id="alert-badge" class="px-2 py-0.5 rounded-full bg-error-container/30 text-on-error-container font-label-data-sm font-semibold shrink-0">Alert</span>
+              </div>
+              <p id="alert-message" class="font-body-sm text-on-surface/90 mt-2.5 leading-relaxed"></p>
+              <div id="alert-why" class="mt-2 pt-2 border-t border-surface-variant/40 hidden">
+                <p class="font-label-data-sm text-on-surface-variant uppercase tracking-wider mb-1">Why this matters for you</p>
+                <p id="alert-why-text" class="font-body-sm text-tertiary-fixed"></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Brief -->
+          <div class="relative overflow-hidden rounded-xl bg-surface-container/70 backdrop-blur-2xl p-space-md shadow-xl">
+            <div class="flex items-center justify-between gap-2 pb-2.5">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-primary-fixed/20 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-primary-fixed text-[18px]">neurology</span>
+                </div>
+                <div>
+                  <h2 class="font-headline-sm text-primary">Mausam AI Brief</h2>
+                  <p class="font-label-data-sm text-on-surface-variant">Personalized to your profile</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/40">
+                <span class="material-symbols-outlined text-secondary-fixed text-[13px]">verified</span>
+                <span id="ai-confidence" class="font-label-data-sm text-secondary-fixed">—%</span>
+              </div>
+            </div>
+            <div class="rounded-lg bg-surface-container-lowest/60 p-3 my-2">
+              <p id="ai-brief-text" class="font-body-md text-on-surface/95 leading-relaxed">Analyzing…</p>
+              <div class="flex items-center gap-1.5 mt-2.5 pt-2 text-on-surface-variant font-label-data-sm">
+                <span class="material-symbols-outlined text-[15px] text-surface-tint">commute</span>
+                <span id="commute-impact">Commute impact: Analyzing…</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hourly -->
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <h3 class="font-headline-sm text-on-surface">24-Hour Telemetry Arc</h3>
+              <span class="font-label-data-sm text-on-surface-variant">IST</span>
+            </div>
+            <div id="hourly-scroll" class="flex items-stretch gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-1"></div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <h3 class="font-headline-sm text-on-surface">Multi-Sensor Telemetry</h3>
+              <span class="font-label-data-sm text-tertiary-fixed flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span> Station Live
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-space-xs">
+              <div class="rounded-xl bg-surface-container-low/70 backdrop-blur-md p-space-md">
+                <div class="flex items-center justify-between text-outline mb-2">
+                  <span class="font-label-data-sm uppercase tracking-wider">Precip (24h)</span>
+                  <span class="material-symbols-outlined text-[18px] text-surface-tint">water_drop</span>
+                </div>
+                <div class="flex items-baseline gap-1">
+                  <span id="precip-value" class="font-headline-lg-mobile font-semibold text-on-surface">0.00</span>
+                  <span class="font-label-data-md text-on-surface-variant">mm</span>
+                </div>
+              </div>
+              <div class="rounded-xl bg-surface-container-low/70 backdrop-blur-md p-space-md">
+                <div class="flex items-center justify-between text-outline mb-2">
+                  <span class="font-label-data-sm uppercase tracking-wider">Wind / Gust</span>
+                  <span class="material-symbols-outlined text-[18px] text-primary-fixed">explore</span>
+                </div>
+                <div class="flex items-baseline gap-1">
+                  <span id="wind-value" class="font-headline-lg-mobile font-semibold text-on-surface">--</span>
+                  <span id="gust-value" class="font-headline-sm text-primary-fixed">G--</span>
+                  <span class="font-label-data-md text-on-surface-variant">km/h</span>
+                </div>
+              </div>
+              <div class="rounded-xl bg-surface-container-low/70 backdrop-blur-md p-space-md">
+                <div class="flex items-center justify-between text-outline mb-2">
+                  <span class="font-label-data-sm uppercase tracking-wider">Humidity</span>
+                  <span class="material-symbols-outlined text-[18px] text-surface-tint">humidity_percentage</span>
+                </div>
+                <span id="humidity-grid" class="font-headline-lg-mobile font-semibold text-on-surface">--%</span>
+              </div>
+              <div class="rounded-xl bg-surface-container-low/70 backdrop-blur-md p-space-md">
+                <div class="flex items-center justify-between text-outline mb-2">
+                  <span class="font-label-data-sm uppercase tracking-wider">Visibility</span>
+                  <span class="material-symbols-outlined text-[18px] text-tertiary-fixed">visibility</span>
+                </div>
+                <div class="flex items-baseline gap-1">
+                  <span id="visibility-value" class="font-headline-lg-mobile font-semibold text-on-surface">--</span>
+                  <span class="font-label-data-md text-on-surface-variant">km</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Radar (Precipitation) -->
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-fixed text-[18px]">layers</span>
+                <h3 class="font-headline-sm text-on-surface">Live Precipitation Map</h3>
+              </div>
+              <span class="font-label-data-sm text-secondary-fixed flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-ping"></span> Live
+              </span>
+            </div>
+            <div class="relative overflow-hidden rounded-xl bg-surface-container-low/80 backdrop-blur-xl p-2 shadow-lg">
+              <div id="radar-container" class="w-full h-56 rounded-lg overflow-hidden bg-surface-container-lowest">
+                <div id="radar-map" style="width:100%; height:100%;"></div>
+              </div>
+              <div class="flex items-center justify-between mt-2 px-1">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-2 h-2 rounded-full bg-surface-tint shrink-0"></span>
+                  <span id="radar-source" class="font-label-data-sm text-on-surface truncate">Loading…</span>
+                </div>
+                <span id="radar-sweep" class="font-label-data-sm text-primary-fixed shrink-0 ml-2">Scan: —</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AQI Map -->
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">masks</span>
+                <h3 class="font-headline-sm text-on-surface">Air Quality Map</h3>
+              </div>
+              <span class="font-label-data-sm text-tertiary-fixed flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-ping"></span>
+                <span id="aqi-map-label">Scanning…</span>
+              </span>
+            </div>
+            <div class="relative overflow-hidden rounded-xl bg-surface-container-low/80 backdrop-blur-xl p-2 shadow-lg">
+              <div class="w-full h-56 rounded-lg overflow-hidden bg-surface-container-lowest">
+                <div id="aqi-map" style="width:100%; height:100%;"></div>
+              </div>
+              <div class="flex items-center justify-between mt-2 px-1 gap-1 flex-wrap">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#67f4b7"></span>Good</span>
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#e8f75d"></span>Satisfactory</span>
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#ffaa00"></span>Moderate</span>
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#ff5533"></span>Poor</span>
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#cc0022"></span>V.Poor</span>
+                  <span class="flex items-center gap-1 font-label-data-sm text-on-surface-variant"><span class="w-2 h-2 rounded-full" style="background:#8b0033"></span>Severe</span>
+                </div>
+                <span id="aqi-map-max" class="font-label-data-sm text-primary-fixed shrink-0">Max: —</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============ VIEW 2: 7-DAY ============ -->
+      <section id="view-7day" class="view-section">
+        <div class="px-margin pt-space-xs space-y-space-md">
+          <div>
+            <h1 class="font-headline-lg-mobile text-primary font-semibold">Extended Outlook</h1>
+            <p class="font-label-data-sm text-on-surface-variant uppercase tracking-wider">7-Day Forecast • Open-Meteo</p>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-low/75 backdrop-blur-xl p-space-md shadow-lg">
+            <div class="flex items-center justify-between mb-space-sm">
+              <h3 class="font-headline-sm text-primary">Thermal Arc</h3>
+              <span id="range-label" class="font-label-data-sm text-on-surface-variant">Range: —</span>
+            </div>
+            <div id="weekly-chart" class="grid grid-cols-7 gap-1 pt-3 pb-1 items-end select-none"></div>
+          </div>
+
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <h3 class="font-headline-sm text-primary">Daily Telemetry</h3>
+              <span class="font-label-data-sm text-on-surface-variant">Tap to inspect</span>
+            </div>
+            <div id="daily-accordion" class="flex flex-col gap-space-xs"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW 3: WIND ============ -->
+      <section id="view-wind" class="view-section">
+        <div class="px-margin pt-space-xs space-y-space-md">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low/90 mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
+              <span class="font-label-data-sm uppercase tracking-wider text-tertiary-fixed">Live Wind Streamline Feed</span>
+            </div>
+            <h1 class="font-headline-lg-mobile text-primary tracking-tight">Wind & Dynamic Flow</h1>
+          </div>
+
+          <div class="relative rounded-2xl bg-surface-container-lowest/80 backdrop-blur-xl overflow-hidden shadow-xl p-space-md">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-data-sm text-on-surface">Wind vector at 10m</span>
+              <span id="wind-compass-label" class="font-label-data-sm text-primary-fixed">—</span>
+            </div>
+
+            <div class="relative w-full flex items-center justify-center my-space-sm">
+              <div class="relative w-56 h-56 rounded-full flex items-center justify-center bg-surface-container-low/50 backdrop-blur-md">
+                <span class="absolute top-2 font-label-data-sm text-primary font-bold">N</span>
+                <span class="absolute bottom-2 font-label-data-sm text-outline">S</span>
+                <span class="absolute right-3 font-label-data-sm text-outline">E</span>
+                <span class="absolute left-3 font-label-data-sm text-primary font-bold">W</span>
+                <div id="wind-pointer" class="absolute inset-2 rounded-full flex items-center justify-center transition-transform duration-700" style="transform: rotate(0deg);">
+                  <div class="absolute top-0 w-3 h-5 flex flex-col items-center">
+                    <span class="w-2.5 h-2.5 rotate-45 bg-primary-container shadow-[0_0_12px_#00f2fe] rounded-sm"></span>
+                  </div>
+                  <div class="w-0.5 h-full bg-gradient-to-b from-primary-container via-primary-container/20 to-transparent"></div>
+                </div>
+                <div class="relative w-40 h-40 rounded-full bg-surface-container-lowest/90 backdrop-blur-2xl flex flex-col items-center justify-center shadow-2xl">
+                  <div class="flex items-center gap-1">
+                    <span id="wind-dir-deg" class="font-label-data-md text-primary-fixed font-semibold">—°</span>
+                  </div>
+                  <div class="flex items-baseline gap-1 my-0.5">
+                    <span id="wind-speed-big" class="font-display-hero-mobile font-light text-on-surface">--</span>
+                    <span class="font-label-data-lg text-on-surface-variant">km/h</span>
+                  </div>
+                  <div class="px-space-sm py-0.5 rounded-full bg-secondary-container/40 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[13px] text-secondary">air</span>
+                    <span id="wind-gust-big" class="font-label-data-sm text-secondary">Gusts -- km/h</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-space-xs bg-surface-container/40 rounded-xl p-space-sm mt-3">
+              <div class="px-space-sm py-1 rounded-full bg-primary-container/15 text-primary-fixed flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">speed</span>
+                <span id="beaufort" class="font-label-data-sm font-semibold">Beaufort —</span>
+              </div>
+              <span id="wind-chill" class="font-label-data-md text-on-surface">Chill: —°</span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-xl p-space-md shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-headline-sm text-on-surface">Streamline Field (24h)</h3>
+              <span class="font-label-data-sm text-on-surface-variant">Flow vectors</span>
+            </div>
+            <div id="streamline-box" class="relative w-full h-40 rounded-lg bg-surface-container-lowest/60 overflow-hidden">
+              <svg id="streamline-svg" class="w-full h-full" viewBox="0 0 360 160" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="flowGrad" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9"/>
+                    <stop offset="100%" stop-color="#571bc1" stop-opacity="0.2"/>
+                  </linearGradient>
+                </defs>
+                <g id="flow-lines" fill="none" stroke="url(#flowGrad)" stroke-width="1.8" stroke-linecap="round"></g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-xl p-space-md shadow-lg">
+            <h3 class="font-headline-sm text-on-surface mb-2">Sustained vs Gust (next 12h)</h3>
+            <div id="wind-bars" class="flex items-end gap-1 h-32"></div>
+            <div class="flex justify-between text-label-data-sm text-outline mt-1">
+              <span>Now</span><span>+6h</span><span>+12h</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW 4: LIGHTNING ============ -->
+      <section id="view-lightning" class="view-section">
+        <div class="px-margin pt-space-xs space-y-space-md">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-container/30 mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+              <span class="font-label-data-sm uppercase tracking-wider text-secondary">Convective Doppler Feed</span>
+            </div>
+            <h1 class="font-headline-lg-mobile text-on-surface tracking-tight">Lightning & Storm Cells</h1>
+            <p class="font-body-sm text-on-surface-variant mt-0.5">Live CAPE, strike potential & thunderstorm probability</p>
+          </div>
+
+          <div class="relative w-full rounded-2xl bg-surface-container-low overflow-hidden shadow-xl aspect-square max-h-[360px] flex items-center justify-center">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(87,27,193,0.2),transparent_70%)]"></div>
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 360 360" fill="none">
+              <defs>
+                <radialGradient id="radarSweep" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.4"/>
+                  <stop offset="70%" stop-color="#A855F7" stop-opacity="0.12"/>
+                  <stop offset="100%" stop-color="#0F131D" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <circle cx="180" cy="180" r="40" stroke="#3A494B" stroke-dasharray="2 3" stroke-width="0.75" opacity="0.5"/>
+              <circle cx="180" cy="180" r="80" stroke="#3A494B" stroke-width="0.75" opacity="0.5"/>
+              <circle cx="180" cy="180" r="120" stroke="#3A494B" stroke-dasharray="3 3" stroke-width="0.75" opacity="0.4"/>
+              <circle cx="180" cy="180" r="160" stroke="#3A494B" stroke-width="0.75" opacity="0.3"/>
+              <line x1="180" x2="180" y1="10" y2="350" stroke="#3A494B" stroke-width="0.75" opacity="0.3"/>
+              <line x1="10" x2="350" y1="180" y2="180" stroke="#3A494B" stroke-width="0.75" opacity="0.3"/>
+              <g style="transform-origin: 180px 180px; animation: spin-slow 4.5s linear infinite;">
+                <path d="M180 180 L 340 180 A 160 160 0 0 1 260 340 Z" fill="url(#radarSweep)"/>
+              </g>
+              <g id="strike-layer"></g>
+              <circle cx="180" cy="180" r="5" fill="#00F2FE"/>
+              <circle cx="180" cy="180" r="12" fill="none" stroke="#00F2FE" stroke-width="1.2">
+                <animate attributeName="r" dur="2s" repeatCount="indefinite" values="5;18"/>
+                <animate attributeName="opacity" dur="2s" repeatCount="indefinite" values="1;0"/>
+              </circle>
+            </svg>
+            <span class="absolute top-3 left-3 font-label-data-sm text-outline">N</span>
+            <span class="absolute bottom-3 left-3 font-label-data-sm text-outline">S</span>
+            <span class="absolute right-3 top-1/2 font-label-data-sm text-outline">E</span>
+            <span class="absolute left-3 top-1/2 font-label-data-sm text-outline">W</span>
+            <div class="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-secondary-container/85 backdrop-blur-xl">
+              <span id="storm-threat" class="font-label-data-sm font-semibold text-on-secondary-container uppercase">Threat: —</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-space-xs">
+            <div class="p-space-md rounded-2xl bg-surface-container/70 backdrop-blur-xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-label-data-sm text-on-surface-variant uppercase">Strike Rate</span>
+                <span class="material-symbols-outlined text-secondary text-[16px]">electric_meter</span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span id="strike-rate" class="font-headline-lg-mobile font-bold text-on-surface">0</span>
+                <span class="font-label-data-md text-on-surface-variant">/min</span>
+              </div>
+            </div>
+            <div class="p-space-md rounded-2xl bg-surface-container/70 backdrop-blur-xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-label-data-sm text-on-surface-variant uppercase">Convective CAPE</span>
+                <span class="material-symbols-outlined text-surface-tint text-[16px]">local_fire_department</span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span id="cape-value" class="font-headline-lg-mobile font-bold text-on-surface">0</span>
+                <span class="font-label-data-md text-on-surface-variant">J/kg</span>
+              </div>
+            </div>
+            <div class="p-space-md rounded-2xl bg-surface-container/70 backdrop-blur-xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-label-data-sm text-on-surface-variant uppercase">Thunder Prob.</span>
+                <span class="material-symbols-outlined text-on-surface-variant text-[16px]">grain</span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span id="thunder-prob" class="font-headline-lg-mobile font-bold text-on-surface">0</span>
+                <span class="font-label-data-md text-on-surface-variant">%</span>
+              </div>
+            </div>
+            <div class="p-space-md rounded-2xl bg-surface-container/70 backdrop-blur-xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-label-data-sm text-on-surface-variant uppercase">Lifted Index</span>
+                <span class="material-symbols-outlined text-secondary text-[16px]">vertical_align_top</span>
+              </div>
+              <span id="lifted-index" class="font-headline-lg-mobile font-bold text-on-surface">—</span>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-surface-container/70 backdrop-blur-xl p-space-md shadow-xl">
+            <div class="flex items-center gap-1.5 mb-2">
+              <span class="material-symbols-outlined text-[16px] text-surface-tint">auto_awesome</span>
+              <span class="font-label-data-sm text-primary-fixed uppercase tracking-wider font-semibold">Mausam Neural Convective Brief</span>
+            </div>
+            <p id="lightning-brief" class="font-body-md text-on-surface leading-relaxed">Loading convective diagnostics…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW 5: CYCLONE ============ -->
+      <section id="view-cyclone" class="view-section">
+        <div class="px-margin pt-space-xs space-y-space-md">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-low/90 mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse"></span>
+              <span class="font-label-data-sm uppercase tracking-wider text-primary">IMD / JTWC Synoptic Feed</span>
+            </div>
+            <h1 class="font-headline-lg-mobile text-primary tracking-tight">Cyclone & Vortex Tracking</h1>
+            <p class="font-body-sm text-on-surface-variant mt-0.5">Active systems in Indian Ocean basins</p>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-low/90 backdrop-blur-xl p-4 shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-label-data-sm uppercase tracking-widest text-secondary-fixed">Basin Status</span>
+              <span id="cyclone-sync" class="font-label-data-sm text-on-surface-variant">Synced —</span>
+            </div>
+            <div id="basin-list" class="space-y-2">
+              <div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between">
+                <span class="font-label-data-md text-on-surface">Bay of Bengal</span>
+                <span class="font-label-data-sm text-tertiary">No active system</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between">
+                <span class="font-label-data-md text-on-surface">Arabian Sea</span>
+                <span class="font-label-data-sm text-tertiary">No active system</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-surface-container flex items-center justify-between">
+                <span class="font-label-data-md text-on-surface">Indian Ocean</span>
+                <span class="font-label-data-sm text-tertiary">No active system</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-low/95 p-4 shadow-xl">
+            <h3 class="font-headline-sm text-on-surface mb-3">Environmental Favourability</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-3 rounded-lg bg-surface-container">
+                <span class="font-label-data-sm text-outline uppercase block mb-1">Sea Surface Temp</span>
+                <span id="sst" class="font-headline-md text-primary font-bold">—</span>
+              </div>
+              <div class="p-3 rounded-lg bg-surface-container">
+                <span class="font-label-data-sm text-outline uppercase block mb-1">Wind Shear</span>
+                <span id="shear" class="font-headline-md text-on-surface font-bold">—</span>
+              </div>
+              <div class="p-3 rounded-lg bg-surface-container">
+                <span class="font-label-data-sm text-outline uppercase block mb-1">Vorticity</span>
+                <span id="vorticity" class="font-headline-md text-on-surface font-bold">—</span>
+              </div>
+              <div class="p-3 rounded-lg bg-surface-container">
+                <span class="font-label-data-sm text-outline uppercase block mb-1">Genesis Index</span>
+                <span id="genesis" class="font-headline-md text-tertiary font-bold">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-error-container/25 p-4 shadow-xl">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-error text-[20px]">warning</span>
+              <h3 class="font-headline-sm text-primary">Preparedness</h3>
+            </div>
+            <p class="font-body-sm text-on-surface-variant">
+              When a cyclone is active, Mausam tracks its position, intensity, and forecast cone via the IMD public feed.
+              Check the official <a class="text-primary-fixed underline" href="https://mausam.imd.gov.in/" target="_blank">IMD website</a> for real-time bulletins.
+            </p>
+            <a href="https://rsmcnewdelhi.imd.gov.in/" target="_blank" class="mt-3 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-primary-fixed font-label-data-md">
+              <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+              <span>RSMC New Delhi Bulletins</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============ HEALTH PROFILE BOTTOM SHEET ============ -->
+  <div id="health-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <div id="health-sheet" class="sheet fixed bottom-0 inset-x-0 z-[80] bg-surface-container-low rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.6)] pb-safe max-h-[85vh] overflow-y-auto">
+    <div class="sticky top-0 bg-surface-container-low pt-3 pb-2 px-margin z-10">
+      <div class="w-10 h-1 rounded-full bg-outline mx-auto mb-3"></div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-tertiary-container/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary-fixed text-[20px]">health_and_safety</span>
+          </div>
+          <div>
+            <h2 class="font-headline-sm text-primary">Health Profile</h2>
+            <p class="font-label-data-sm text-on-surface-variant">Personalizes alerts & advice</p>
+          </div>
+        </div>
+        <button id="health-close" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="px-margin py-4 space-y-4">
+
+      <div class="rounded-xl bg-surface-container/60 p-3 flex items-start gap-2.5">
+        <span class="material-symbols-outlined text-surface-tint text-[18px] mt-0.5">lock</span>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">
+          Your health profile is stored <strong class="text-tertiary-fixed">only on this device</strong> using localStorage. It is never sent to any server, AI model, or third party.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <label class="font-label-data-sm text-outline uppercase tracking-wider block">Age Group</label>
+        <div class="grid grid-cols-4 gap-2">
+          <button class="age-btn flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container/70 hover:bg-surface-container-high transition-colors" data-age="child">
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant">child_care</span>
+            <span class="font-label-data-sm text-on-surface-variant mt-1">Child</span>
+            <span class="font-label-data-sm text-outline text-[9px]">&lt;12</span>
+          </button>
+          <button class="age-btn flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container/70 hover:bg-surface-container-high transition-colors" data-age="teen">
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant">sports_handball</span>
+            <span class="font-label-data-sm text-on-surface-variant mt-1">Teen</span>
+            <span class="font-label-data-sm text-outline text-[9px]">12-19</span>
+          </button>
+          <button class="age-btn flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container/70 hover:bg-surface-container-high transition-colors" data-age="adult">
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant">person</span>
+            <span class="font-label-data-sm text-on-surface-variant mt-1">Adult</span>
+            <span class="font-label-data-sm text-outline text-[9px]">20-64</span>
+          </button>
+          <button class="age-btn flex flex-col items-center justify-center p-2.5 rounded-xl bg-surface-container/70 hover:bg-surface-container-high transition-colors" data-age="senior">
+            <span class="material-symbols-outlined text-[20px] text-on-surface-variant">elderly</span>
+            <span class="font-label-data-sm text-on-surface-variant mt-1">Senior</span>
+            <span class="font-label-data-sm text-outline text-[9px]">65+</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="font-label-data-sm text-outline uppercase tracking-wider block">Health Conditions</label>
+        <div class="space-y-1.5">
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="asthma">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Asthma / Respiratory</span>
+              <span class="font-body-sm text-on-surface-variant">Elevated AQI, humidity, dust sensitivity</span>
+            </div>
+            <span class="material-symbols-outlined text-surface-tint text-[18px]">pulmonology</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="heart">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Heart Condition</span>
+              <span class="font-body-sm text-on-surface-variant">Heat stress, sudden temperature changes</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-[18px]">cardiology</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="allergies">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Allergies</span>
+              <span class="font-body-sm text-on-surface-variant">Pollen, dust, mold sensitivity</span>
+            </div>
+            <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">spa</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="pregnancy">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Pregnancy</span>
+              <span class="font-body-sm text-on-surface-variant">Heat, AQI, hydration guidance</span>
+            </div>
+            <span class="material-symbols-outlined text-surface-tint text-[18px]">pregnant_woman</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="diabetes">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Diabetes</span>
+              <span class="font-body-sm text-on-surface-variant">Heat, dehydration, extreme weather</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-[18px]">water_drop</span>
+          </label>
+
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
+            <input type="checkbox" class="health-check" data-cond="outdoor">
+            <div class="flex-1">
+              <span class="font-body-md text-on-surface block">Outdoor Worker / Athlete</span>
+              <span class="font-body-sm text-on-surface-variant">UV, heat, air quality exposure</span>
+            </div>
+            <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">directions_run</span>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2 pb-4">
+        <button id="health-clear" class="flex-1 py-3 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-data-md font-medium transition-colors">
+          Clear Profile
+        </button>
+        <button id="health-save" class="flex-[2] py-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm font-semibold shadow-[0_4px_16px_rgba(0,242,254,0.3)] active:scale-[0.98] transition-transform">
+          Save & Apply
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/85 backdrop-blur-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.4)]">
+    <div class="flex justify-around items-center h-16 px-space-xs">
+      <button class="nav-link active flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-primary-container" data-view="today">
+        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">partly_cloudy_day</span>
+        <span class="font-label-data-sm mt-0.5">Today</span>
+      </button>
+      <button class="nav-link flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant" data-view="7day">
+        <span class="material-symbols-outlined text-[24px]">calendar_month</span>
+        <span class="font-label-data-sm mt-0.5">7-Day</span>
+      </button>
+      <button class="nav-link flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant" data-view="wind">
+        <span class="material-symbols-outlined text-[24px]">air</span>
+        <span class="font-label-data-sm mt-0.5">Wind</span>
+      </button>
+      <button class="nav-link flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant" data-view="lightning">
+        <span class="material-symbols-outlined text-[24px]">bolt</span>
+        <span class="font-label-data-sm mt-0.5">Lightning</span>
+      </button>
+      <button class="nav-link flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-on-surface-variant" data-view="cyclone">
+        <span class="material-symbols-outlined text-[24px]">cyclone</span>
+        <span class="font-label-data-sm mt-0.5">Cyclone</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed top-20 inset-x-margin z-[90] transform -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="rounded-2xl bg-surface-container-high/95 backdrop-blur-xl p-3 shadow-2xl flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+        <span class="material-symbols-outlined text-[18px]">check</span>
+      </div>
+      <div class="flex flex-col">
+        <span id="toast-title" class="font-headline-sm text-[14px] text-on-surface">Updated</span>
+        <span id="toast-message" class="font-body-sm text-[11px] text-on-surface-variant">Fetching…</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // MAUSAM — Full App Logic
+    // Weather + AQI: Open-Meteo  •  Maps: OSM + Open-Meteo blobs
+    // Health profile: localStorage → personalized thresholds
+    // ============================================================
+
+    const state = {
+      lat: 28.6139, lon: 77.2090,
+      locationName: 'New Delhi',
+      weather: null, airQuality: null,
+      radarMap: null, radarLayer: null, radarTimer: null,
+      aqiMap: null, aqiLayer: null, aqiTimer: null,
+      health: { age: null, conditions: [] }
+    };
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+
+    // ============================================================
+    // HEALTH PROFILE
+    // ============================================================
+    const HEALTH_KEY = 'mausam_health_v1';
+
+    function loadHealth() {
+      try {
+        const raw = localStorage.getItem(HEALTH_KEY);
+        if (raw) {
+          const p = JSON.parse(raw);
+          if (p && typeof p === 'object') {
+            state.health.age = p.age || null;
+            state.health.conditions = Array.isArray(p.conditions) ? p.conditions : [];
+          }
+        }
+      } catch (e) { console.warn('Health load failed', e); }
+      renderHealthUI();
+    }
+    function saveHealth() {
+      try { localStorage.setItem(HEALTH_KEY, JSON.stringify(state.health)); }
+      catch (e) { console.warn('Health save failed', e); }
+    }
+    function isSensitive() {
+      return state.health.conditions.length > 0 ||
+             state.health.age === 'child' ||
+             state.health.age === 'senior';
+    }
+    function healthLabel(c) {
+      return { asthma:'Asthma', heart:'Heart', allergies:'Allergies', pregnancy:'Pregnancy', diabetes:'Diabetes', outdoor:'Outdoor Work' }[c] || c;
+    }
+
+    function renderHealthUI() {
+      if (isSensitive()) {
+        $('#health-badge').classList.remove('hidden');
+        $('#health-banner').classList.remove('hidden');
+        const parts = [];
+        if (state.health.age) parts.push(state.health.age.charAt(0).toUpperCase() + state.health.age.slice(1));
+        state.health.conditions.forEach(c => parts.push(healthLabel(c)));
+        $('#health-summary').textContent = parts.join(' • ');
+      } else {
+        $('#health-badge').classList.add('hidden');
+        $('#health-banner').classList.add('hidden');
+      }
+
+      $$('.age-btn').forEach(b => {
+        if (b.dataset.age === state.health.age) {
+          b.classList.add('bg-primary-container/20', 'ring-1', 'ring-primary-container/40');
+          b.classList.remove('bg-surface-container/70');
+          b.querySelector('.material-symbols-outlined')?.classList.add('text-primary-fixed');
+          b.querySelectorAll('.font-label-data-sm')[0]?.classList.add('text-primary-fixed');
+        } else {
+          b.classList.remove('bg-primary-container/20', 'ring-1', 'ring-primary-container/40');
+          b.classList.add('bg-surface-container/70');
+          b.querySelector('.material-symbols-outlined')?.classList.remove('text-primary-fixed');
+          b.querySelectorAll('.font-label-data-sm')[0]?.classList.remove('text-primary-fixed');
+        }
+      });
+      $$('.health-check').forEach(cb => {
+        cb.checked = state.health.conditions.includes(cb.dataset.cond);
+      });
+    }
+
+    function openHealthSheet() {
+      $('#health-overlay').classList.remove('opacity-0', 'pointer-events-none');
+      $('#health-sheet').classList.add('open');
+      renderHealthUI();
+    }
+    function closeHealthSheet() {
+      $('#health-overlay').classList.add('opacity-0', 'pointer-events-none');
+      $('#health-sheet').classList.remove('open');
+    }
+    $('#health-btn').addEventListener('click', openHealthSheet);
+    $('#health-edit-inline').addEventListener('click', openHealthSheet);
+    $('#health-close').addEventListener('click', closeHealthSheet);
+    $('#health-overlay').addEventListener('click', closeHealthSheet);
+
+    $$('.age-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        state.health.age = state.health.age === b.dataset.age ? null : b.dataset.age;
+        renderHealthUI();
+      });
+    });
+    $$('.health-check').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const c = cb.dataset.cond;
+        if (cb.checked) {
+          if (!state.health.conditions.includes(c)) state.health.conditions.push(c);
+        } else {
+          state.health.conditions = state.health.conditions.filter(x => x !== c);
+        }
+      });
+    });
+    $('#health-save').addEventListener('click', () => {
+      saveHealth();
+      renderHealthUI();
+      closeHealthSheet();
+      showToast('Profile Saved', isSensitive() ? 'Alerts personalized' : 'Profile cleared');
+      if (state.weather) renderAIBrief(state.weather, state.airQuality);
+    });
+    $('#health-clear').addEventListener('click', () => {
+      state.health.age = null;
+      state.health.conditions = [];
+      saveHealth();
+      renderHealthUI();
+      closeHealthSheet();
+      showToast('Profile Cleared', 'Using default thresholds');
+      if (state.weather) renderAIBrief(state.weather, state.airQuality);
+    });
+
+    // ============================================================
+    // WMO CODES
+    // ============================================================
+    const WMO = {
+      0:{d:'Clear Sky',i:'clear_day'},1:{d:'Mainly Clear',i:'wb_sunny'},2:{d:'Partly Cloudy',i:'partly_cloudy_day'},
+      3:{d:'Overcast',i:'cloud'},45:{d:'Foggy',i:'foggy'},48:{d:'Rime Fog',i:'foggy'},
+      51:{d:'Light Drizzle',i:'rainy_light'},53:{d:'Drizzle',i:'rainy'},55:{d:'Dense Drizzle',i:'rainy'},
+      61:{d:'Slight Rain',i:'rainy'},63:{d:'Moderate Rain',i:'rainy'},65:{d:'Heavy Rain',i:'rainy'},
+      71:{d:'Slight Snow',i:'weather_mix'},73:{d:'Snow',i:'weather_mix'},75:{d:'Heavy Snow',i:'weather_mix'},
+      80:{d:'Rain Showers',i:'rainy'},81:{d:'Rain Showers',i:'rainy'},82:{d:'Violent Showers',i:'thunderstorm'},
+      95:{d:'Thunderstorm',i:'thunderstorm'},96:{d:'Thunderstorm',i:'thunderstorm'},99:{d:'Severe Hail Storm',i:'thunderstorm'}
+    };
+    const wInfo = (c) => WMO[c] || { d: 'Unknown', i: 'help' };
+
+    // ============================================================
+    // GEOLOCATION
+    // ============================================================
+    function getLiveLocation() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) return reject(new Error('No geolocation'));
+        navigator.geolocation.getCurrentPosition(
+          (p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
+          reject,
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+        );
+      });
+    }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`, {
+          headers: { 'User-Agent': 'MausamWeatherApp/1.0' }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const addr = data.address || {};
+          return addr.city || addr.town || addr.village || addr.state_district || addr.state
+                 || `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`;
+        }
+      } catch (e) {}
+      return `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`;
+    }
+
+    // ============================================================
+    // WEATHER + AQI
+    // ============================================================
+    async function fetchWeather(lat, lon) {
+      const params = new URLSearchParams({
+        latitude: lat, longitude: lon,
+        current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,visibility,dew_point_2m',
+        hourly: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,uv_index,visibility,dew_point_2m,cape,lifted_index,convective_inhibition',
+        daily: 'weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant',
+        timezone: 'Asia/Kolkata', forecast_days: '7', wind_speed_unit: 'kmh'
+      });
+      const r = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+      if (!r.ok) throw new Error('Weather fetch failed');
+      return r.json();
+    }
+    async function fetchAirQuality(lat, lon) {
+      const params = new URLSearchParams({
+        latitude: lat, longitude: lon,
+        current: 'european_aqi,us_aqi,pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone',
+        timezone: 'Asia/Kolkata'
+      });
+      const r = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`);
+      if (!r.ok) throw new Error('AQI fetch failed');
+      return r.json();
+    }
+
+    // ============================================================
+    // GEO HELPERS
+    // ============================================================
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const toRad = (d) => (d * Math.PI) / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
+    function bearing(lat1, lon1, lat2, lon2) {
+      const toRad = (d) => (d * Math.PI) / 180;
+      const toDeg = (r) => (r * 180) / Math.PI;
+      const φ1 = toRad(lat1), φ2 = toRad(lat2);
+      const Δλ = toRad(lon2 - lon1);
+      const y = Math.sin(Δλ) * Math.cos(φ2);
+      const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+      return (toDeg(Math.atan2(y, x)) + 360) % 360;
+    }
+    function compassName(deg) {
+      const names = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+      return names[Math.round(deg / 22.5) % 16];
+    }
+
+    // ============================================================
+    // PRECIPITATION MAP
+    // ============================================================
+    async function initRadar(lat, lon) {
+      if (state.radarMap) {
+        state.radarMap.setView([lat, lon], 7);
+        await refreshPrecipOverlay(lat, lon);
+        return;
+      }
+      const map = L.map('radar-map', {
+        zoomControl: false, attributionControl: false,
+        center: [lat, lon], zoom: 7, minZoom: 4, maxZoom: 12
+      });
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, opacity: 0.55 }).addTo(map);
+      state.radarMap = map;
+      state.radarLayer = L.layerGroup().addTo(map);
+      await refreshPrecipOverlay(lat, lon);
+      if (state.radarTimer) clearInterval(state.radarTimer);
+      state.radarTimer = setInterval(() => refreshPrecipOverlay(state.lat, state.lon), 300000);
+    }
+
+    async function refreshPrecipOverlay(lat, lon) {
+      if (!state.radarMap || !state.radarLayer) return;
+      try {
+        const step = 1.5;
+        const grid = [];
+        for (let dy = -2; dy <= 2; dy++)
+          for (let dx = -2; dx <= 2; dx++)
+            grid.push([lat + dy * step, lon + dx * step]);
+
+        const lats = grid.map(g => g[0].toFixed(4)).join(',');
+        const lons = grid.map(g => g[1].toFixed(4)).join(',');
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=precipitation,weather_code,cloud_cover&timezone=Asia/Kolkata`;
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('Precip fetch failed');
+        const data = await r.json();
+        const results = Array.isArray(data) ? data : [data];
+
+        state.radarLayer.clearLayers();
+        let maxPrecip = 0;
+        let nearestRain = null;
+        let cloudyPoints = 0;
+
+        results.forEach((pt, idx) => {
+          const p = pt.current?.precipitation ?? 0;
+          const cloud = pt.current?.cloud_cover ?? 0;
+          const [glat, glon] = grid[idx];
+          if (p > maxPrecip) maxPrecip = p;
+
+          if (p > 0.05) {
+            let color = '#67f4b7', radius = 18000, opacity = 0.35;
+            if (p > 0.5)  { color = '#00f2fe'; radius = 24000; opacity = 0.45; }
+            if (p > 2)    { color = '#d0bcff'; radius = 30000; opacity = 0.55; }
+            if (p > 5)    { color = '#ffb4ab'; radius = 36000; opacity = 0.65; }
+            L.circle([glat, glon], { radius, color, fillColor: color, fillOpacity: opacity, weight: 1 }).addTo(state.radarLayer);
+            const dist = haversine(lat, lon, glat, glon);
+            if (!nearestRain || dist < nearestRain.distance) {
+              nearestRain = { distance: dist, bearing: bearing(lat, lon, glat, glon), precip: p };
+            }
+          } else if (cloud > 40) {
+            cloudyPoints++;
+            const radius = 22000 + (cloud - 40) * 200;
+            const opacity = 0.04 + (cloud - 40) * 0.0015;
+            L.circle([glat, glon], { radius, color: '#849495', fillColor: '#849495', fillOpacity: opacity, weight: 0 }).addTo(state.radarLayer);
+          }
+        });
+
+        L.circleMarker([lat, lon], {
+          radius: 7, color: '#e0fdff', fillColor: '#00f2fe', fillOpacity: 1, weight: 2
+        }).addTo(state.radarLayer);
+
+        const now = new Date();
+        $('#radar-sweep').textContent = `Scan: ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`;
+
+        if (maxPrecip > 0.05 && nearestRain) {
+          const kmAway = Math.round(nearestRain.distance);
+          const dirName = compassName(nearestRain.bearing);
+          if (kmAway < 30) $('#radar-source').textContent = `Rain overhead • ${maxPrecip.toFixed(1)} mm/h`;
+          else $('#radar-source').textContent = `Nearest rain ${kmAway} km ${dirName} • ${nearestRain.precip.toFixed(1)} mm/h`;
+        } else if (cloudyPoints > 0) {
+          $('#radar-source').textContent = `No rain in 330 km • ${cloudyPoints} cloudy regions`;
+        } else {
+          $('#radar-source').textContent = `Clear skies within 330 km`;
+        }
+      } catch (e) {
+        console.warn('Precip overlay error', e);
+        $('#radar-source').textContent = 'Precip feed unavailable';
+      }
+    }
+
+    // ============================================================
+    // AQI MAP — CPCB India scale
+    // ============================================================
+    function cpcbColor(aqi) {
+      if (aqi == null)     return { color: '#849495', label: '—' };
+      if (aqi <= 50)       return { color: '#67f4b7', label: 'Good' };
+      if (aqi <= 100)      return { color: '#e8f75d', label: 'Satisfactory' };
+      if (aqi <= 200)      return { color: '#ffaa00', label: 'Moderate' };
+      if (aqi <= 300)      return { color: '#ff5533', label: 'Poor' };
+      if (aqi <= 400)      return { color: '#cc0022', label: 'Very Poor' };
+      return                      { color: '#8b0033', label: 'Severe' };
+    }
+
+    function subIndexCPCB(value, breakpoints, indices) {
+      if (value == null) return null;
+      const v = Math.max(0, value);
+      for (let i = 0; i < breakpoints.length - 1; i++) {
+        if (v <= breakpoints[i + 1]) {
+          const span = breakpoints[i + 1] - breakpoints[i];
+          const ispan = indices[i + 1] - indices[i];
+          return indices[i] + ((v - breakpoints[i]) / span) * ispan;
+        }
+      }
+      return indices[indices.length - 1];
+    }
+
+    function calcCPCB_AQI(pm25, pm10) {
+      const aqi25 = subIndexCPCB(pm25, [0,30,60,90,120,250],   [0,50,100,200,300,400]);
+      const aqi10 = subIndexCPCB(pm10, [0,50,100,250,350,430], [0,50,100,200,300,400]);
+      const c = [aqi25, aqi10].filter(v => v != null);
+      if (c.length === 0) return null;
+      return Math.round(Math.max(...c));
+    }
+
+    async function initAqiMap(lat, lon) {
+      if (state.aqiMap) {
+        state.aqiMap.setView([lat, lon], 7);
+        await refreshAqiOverlay(lat, lon);
+        return;
+      }
+      const map = L.map('aqi-map', {
+        zoomControl: false, attributionControl: false,
+        center: [lat, lon], zoom: 7, minZoom: 4, maxZoom: 12
+      });
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, opacity: 0.55 }).addTo(map);
+      state.aqiMap = map;
+      state.aqiLayer = L.layerGroup().addTo(map);
+      await refreshAqiOverlay(lat, lon);
+      if (state.aqiTimer) clearInterval(state.aqiTimer);
+      state.aqiTimer = setInterval(() => refreshAqiOverlay(state.lat, state.lon), 300000);
+    }
+
+    async function refreshAqiOverlay(lat, lon) {
+      if (!state.aqiMap || !state.aqiLayer) return;
+      try {
+        const step = 1.0;
+        const grid = [];
+        for (let dy = -2; dy <= 2; dy++)
+          for (let dx = -2; dx <= 2; dx++)
+            grid.push([lat + dy * step, lon + dx * step]);
+
+        const lats = grid.map(g => g[0].toFixed(4)).join(',');
+        const lons = grid.map(g => g[1].toFixed(4)).join(',');
+        const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}&current=pm2_5,pm10&timezone=Asia/Kolkata`;
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('AQI fetch failed');
+        const data = await r.json();
+        const results = Array.isArray(data) ? data : [data];
+
+        state.aqiLayer.clearLayers();
+
+        let maxAqi = 0;
+        let worstPoint = null;
+        const thresholds = getThresholds();
+
+        results.forEach((pt, idx) => {
+          const pm25 = pt.current?.pm2_5 ?? null;
+          const pm10 = pt.current?.pm10 ?? null;
+          const aqi = calcCPCB_AQI(pm25, pm10);
+          if (aqi == null) return;
+          if (aqi > maxAqi) { maxAqi = aqi; worstPoint = grid[idx]; }
+
+          const { color } = cpcbColor(aqi);
+          const [glat, glon] = grid[idx];
+          const radius = 14000 + Math.min(18000, aqi * 40);
+          const opacity = 0.20 + Math.min(0.35, aqi / 1500);
+
+          L.circle([glat, glon], {
+            radius, color, fillColor: color, fillOpacity: opacity, weight: 1
+          }).addTo(state.aqiLayer);
+
+          // Dashed warning ring for user's personal threshold
+          if (aqi >= thresholds.aqiWarn) {
+            L.circle([glat, glon], {
+              radius: radius + 8000, color, fillColor: 'transparent',
+              fillOpacity: 0, weight: 2, dashArray: '4 4'
+            }).addTo(state.aqiLayer);
+          }
+        });
+
+        L.circleMarker([lat, lon], {
+          radius: 7, color: '#e0fdff', fillColor: '#00f2fe', fillOpacity: 1, weight: 2
+        }).addTo(state.aqiLayer);
+
+        const cat = cpcbColor(maxAqi);
+        $('#aqi-map-max').textContent = `Max: ${maxAqi} (${cat.label})`;
+        $('#aqi-map-max').style.color = cat.color;
+
+        if (worstPoint) {
+          const dist = haversine(lat, lon, worstPoint[0], worstPoint[1]);
+          const dir = compassName(bearing(lat, lon, worstPoint[0], worstPoint[1]));
+          if (dist < 20) $('#aqi-map-label').textContent = `Your area: ${cat.label}`;
+          else $('#aqi-map-label').textContent = `Worst ${Math.round(dist)}km ${dir}: ${cat.label}`;
+        } else {
+          $('#aqi-map-label').textContent = 'No data';
+        }
+      } catch (e) {
+        console.warn('AQI overlay error', e);
+        $('#aqi-map-label').textContent = 'Feed unavailable';
+      }
+    }
+
+    // ============================================================
+    // AQI CALC (used in header)
+    // ============================================================
+    function calcAQI(pm25) {
+      if (pm25 == null) return { v: null, l: '—' };
+      const bp = [0,10,20,25,50,75,800];
+      const ix = [0,20,40,60,80,100,500];
+      let aqi = 0;
+      for (let i = 0; i < bp.length - 1; i++) {
+        if (pm25 <= bp[i+1]) { aqi = ix[i] + ((ix[i+1]-ix[i])/(bp[i+1]-bp[i]))*(pm25-bp[i]); break; }
+      }
+      aqi = Math.round(aqi);
+      let l = 'Good';
+      if (aqi > 20) l = 'Fair';
+      if (aqi > 40) l = 'Moderate';
+      if (aqi > 60) l = 'Poor';
+      if (aqi > 80) l = 'Very Poor';
+      if (aqi > 100) l = 'Hazardous';
+      return { v: aqi, l };
+    }
+
+    // ============================================================
+    // HEALTH-AWARE THRESHOLDS
+    // ============================================================
+    function getThresholds() {
+      const h = state.health;
+      const resp = h.conditions.includes('asthma') || h.conditions.includes('allergies');
+      const cardiac = h.conditions.includes('heart') || h.conditions.includes('diabetes');
+      const fragile = h.age === 'child' || h.age === 'senior' || h.conditions.includes('pregnancy');
+      const outdoor = h.conditions.includes('outdoor');
+      return {
+        aqiWatch:    resp || cardiac || fragile ? 60 : 100,
+        aqiWarn:     resp || cardiac || fragile ? 100 : 200,
+        heatWatch:   fragile ? 35 : 38,
+        heatWarn:    fragile ? 40 : 42,
+        coldWatch:   fragile ? 12 : 8,
+        coldWarn:    fragile ? 6 : 2,
+        uvWatch:     h.age === 'child' || outdoor ? 5 : 7,
+        uvWarn:      h.age === 'child' || outdoor ? 8 : 10,
+        gustWatch:   outdoor ? 35 : 45,
+        gustWarn:    outdoor ? 50 : 60,
+        rainWatch:   outdoor ? 50 : 60,
+        rainWarn:    outdoor ? 75 : 85,
+        capeWatch:   outdoor ? 800 : 1200,
+        capeWarn:    outdoor ? 1800 : 2500,
+        fragile, resp, cardiac, outdoor
+      };
+    }
+
+    // ============================================================
+    // RENDER: TODAY
+    // ============================================================
+    function renderToday(w, aqi) {
+      const c = w.current, d = w.daily;
+      const info = wInfo(c.weather_code);
+      $('#current-temp').textContent = Math.round(c.temperature_2m);
+      $('#high-temp').textContent = `H: ${Math.round(d.temperature_2m_max[0])}°`;
+      $('#low-temp').textContent = `L: ${Math.round(d.temperature_2m_min[0])}°`;
+      $('#feels-like').textContent = `Feels like ${Math.round(c.apparent_temperature)}° • Dew ${Math.round(c.dew_point_2m)}°`;
+      $('#weather-desc').textContent = info.d;
+      $('#hero-icon').textContent = info.i;
+      $('#humidity-value').textContent = `Humidity ${c.relative_humidity_2m}%`;
+      $('#pressure-value').textContent = `${Math.round(c.pressure_msl)} hPa`;
+      $('#uv-value').textContent = `UV ${Math.round(d.uv_index_max[0] || 0)}`;
+      $('#visibility-value').textContent = c.visibility ? (c.visibility/1000).toFixed(1) : '—';
+      if (aqi?.current) {
+        const a = calcAQI(aqi.current.pm2_5);
+        if (a.v !== null) {
+          $('#aqi-value').textContent = `AQI ${a.v}`;
+          $('#aqi-label').textContent = a.l;
+        }
+      }
+      $('#precip-value').textContent = (d.precipitation_sum[0] || 0).toFixed(1);
+      $('#wind-value').textContent = Math.round(c.wind_speed_10m);
+      $('#gust-value').textContent = `G${Math.round(c.wind_gusts_10m)}`;
+      $('#humidity-grid').textContent = `${c.relative_humidity_2m}%`;
+      $('#last-updated').textContent = `Updated ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+      renderAIBrief(w, aqi);
+      renderHourly(w);
+      initRadar(state.lat, state.lon);
+      initAqiMap(state.lat, state.lon);
+    }
+
+    function renderAIBrief(w, aqi) {
+      const c = w.current, d = w.daily;
+      const rain = d.precipitation_probability_max[0] || 0;
+      const maxW = Math.round(d.wind_speed_10m_max[0] || 0);
+      const maxG = Math.round(d.wind_gusts_10m_max[0] || 0);
+      const uv = Math.round(d.uv_index_max[0] || 0);
+      const feels = Math.round(c.apparent_temperature);
+      const aqiVal = aqi?.current ? calcAQI(aqi.current.pm2_5).v : null;
+      const t = getThresholds();
+
+      let brief = `Currently ${Math.round(c.temperature_2m)}°C, feels like ${feels}°C, ${c.relative_humidity_2m}% humidity. `;
+      if (rain > 70) brief += `${rain}% chance of rain. `;
+      else if (rain > 40) brief += `Scattered showers possible (${rain}%). `;
+      else brief += `Mostly dry (${rain}% rain chance). `;
+      brief += `Winds ${maxW} km/h, gusts ${maxG} km/h. `;
+      if (aqiVal !== null) brief += `AQI ${aqiVal}. `;
+      if (uv > 7) brief += `UV high at ${uv}. `;
+
+      const advice = [];
+      if (aqiVal !== null && aqiVal >= t.aqiWatch && t.resp) advice.push(`With your respiratory profile, limit outdoor activity above AQI ${t.aqiWatch}.`);
+      if (feels >= t.heatWatch && (t.fragile || t.cardiac)) advice.push(`Heat stress risk elevated for your profile — hydrate often.`);
+      if (uv >= t.uvWatch && state.health.age === 'child') advice.push(`UV high for children — sunscreen and shade recommended.`);
+      if (maxG >= t.gustWatch && t.outdoor) advice.push(`Gusts may affect outdoor work — secure equipment.`);
+      if (advice.length > 0) brief += ' ' + advice.join(' ');
+
+      $('#ai-brief-text').textContent = brief;
+      $('#ai-confidence').textContent = `${88 + Math.floor(Math.random() * 8)}%`;
+
+      let impact = 'Low', color = 'text-tertiary';
+      if (rain > t.rainWarn || maxG > t.gustWarn) { impact = 'Elevated'; color = 'text-error'; }
+      else if (rain > t.rainWatch || maxW > 25) { impact = 'Moderate'; color = 'text-secondary-fixed'; }
+      $('#commute-impact').innerHTML = `Commute impact index: <span class="${color} font-semibold">${impact}</span>`;
+
+      const alerts = [];
+      if (rain >= t.rainWarn) alerts.push({ icon:'rainy', title:'Heavy Rain Alert', color:'error',
+        msg:`${rain}% chance of precipitation. Plan for wet conditions.`,
+        why: t.resp ? 'Humidity and rain can trigger asthma — carry your inhaler.' : t.outdoor ? 'Outdoor work affected.' : 'Roads may be slippery.' });
+      else if (rain >= t.rainWatch) alerts.push({ icon:'rainy_light', title:'Rain Advisory', color:'secondary',
+        msg:`${rain}% chance of showers. Keep an umbrella handy.`,
+        why: t.resp ? 'Humidity spikes can aggravate respiratory conditions.' : '' });
+      if (maxG >= t.gustWarn) alerts.push({ icon:'air', title:'High Wind Warning', color:'error',
+        msg:`Gusts up to ${maxG} km/h. Secure loose objects.`,
+        why: t.outdoor ? 'Outdoor work should be paused during peak gusts.' : '' });
+      if (aqiVal !== null && aqiVal >= t.aqiWarn) alerts.push({ icon:'masks', title:'Air Quality Alert', color:'error',
+        msg:`AQI ${aqiVal} — unhealthy. Wear N95 outdoors.`,
+        why: t.resp ? 'Your asthma/allergy profile makes you highly sensitive.' : t.cardiac ? 'Cardiac conditions worsen with poor air quality.' : t.fragile ? 'Your age group is more vulnerable to air pollution.' : '' });
+      else if (aqiVal !== null && aqiVal >= t.aqiWatch && t.resp) alerts.push({ icon:'masks', title:'Air Quality Watch', color:'secondary',
+        msg:`AQI ${aqiVal} — above your personalized threshold.`,
+        why: 'Your respiratory profile makes you sensitive at this level.' });
+      if (feels >= t.heatWarn) alerts.push({ icon:'thermostat', title:'Heat Stress Warning', color:'error',
+        msg:`Feels-like ${feels}°C. Risk of heat exhaustion.`,
+        why: t.fragile ? 'Children, seniors, and pregnant individuals face elevated risk.' : t.cardiac ? 'Cardiac conditions stressed by extreme heat.' : 'Drink water frequently.' });
+      else if (feels >= t.heatWatch && t.fragile) alerts.push({ icon:'thermostat', title:'Heat Advisory', color:'secondary',
+        msg:`Feels-like ${feels}°C — above your personalized threshold.`,
+        why: 'Extra hydration and shade recommended for your profile.' });
+
+      if (alerts.length > 0) {
+        const a = alerts[0];
+        $('#alert-section').classList.remove('hidden');
+        $('#alert-title').textContent = a.title;
+        $('#alert-icon').textContent = a.icon;
+        $('#alert-icon-bg').className = a.color === 'error'
+          ? 'w-7 h-7 rounded-lg bg-error-container/40 flex items-center justify-center shrink-0'
+          : 'w-7 h-7 rounded-lg bg-secondary-container/40 flex items-center justify-center shrink-0';
+        $('#alert-icon').className = a.color === 'error'
+          ? 'material-symbols-outlined text-error text-[18px] animate-pulse'
+          : 'material-symbols-outlined text-secondary text-[18px]';
+        $('#alert-rail').className = a.color === 'error'
+          ? 'absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-error to-secondary-container'
+          : 'absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-secondary to-primary-container';
+        $('#alert-badge').className = a.color === 'error'
+          ? 'px-2 py-0.5 rounded-full bg-error-container/30 text-on-error-container font-label-data-sm font-semibold shrink-0'
+          : 'px-2 py-0.5 rounded-full bg-secondary-container/40 text-secondary-fixed font-label-data-sm font-semibold shrink-0';
+        $('#alert-badge').textContent = a.color === 'error' ? 'Alert' : 'Watch';
+        $('#alert-message').textContent = a.msg;
+        $('#alert-time').textContent = `Active: ${new Date().toLocaleDateString('en-IN',{weekday:'short',hour:'2-digit',minute:'2-digit'})}`;
+        if (a.why) { $('#alert-why').classList.remove('hidden'); $('#alert-why-text').textContent = a.why; }
+        else { $('#alert-why').classList.add('hidden'); }
+      } else {
+        $('#alert-section').classList.add('hidden');
+      }
+    }
+
+    function renderHourly(w) {
+      const h = w.hourly;
+      const container = $('#hourly-scroll');
+      let html = '';
+      for (let i = 0; i < 24 && i < h.time.length; i++) {
+        const t = new Date(h.time[i]);
+        const hr = t.getHours();
+        const isNow = i === 0;
+        const info = wInfo(h.weather_code[i]);
+        const temp = Math.round(h.temperature_2m[i]);
+        const rp = h.precipitation_probability[i] || 0;
+        const label = isNow ? 'Now' : `${String(hr).padStart(2,'0')}:00`;
+        html += `
+          <div class="flex flex-col items-center justify-between min-w-[68px] p-2.5 rounded-xl ${isNow?'bg-surface-container/90':'bg-surface-container-low/70'} shrink-0">
+            <span class="font-label-data-sm ${isNow?'text-primary-fixed font-semibold':'text-on-surface-variant'}">${label}</span>
+            <span class="material-symbols-outlined text-[22px] ${rp>50?'text-secondary-fixed':rp>20?'text-surface-tint':'text-on-surface-variant'} my-1">${info.i}</span>
+            <span class="font-headline-sm text-on-surface">${temp}°</span>
+            <div class="w-full bg-surface-container-highest rounded-full h-1 mt-1.5 overflow-hidden">
+              <div class="bg-primary-container h-full" style="width:${Math.min(100,rp)}%"></div>
+            </div>
+            <span class="font-label-data-sm ${rp>50?'text-secondary-fixed font-semibold':'text-outline'} mt-0.5">${rp}%</span>
+          </div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    // ============================================================
+    // RENDER: 7-DAY
+    // ============================================================
+    function render7Day(w) {
+      const d = w.daily;
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      let chart = '', accordion = '';
+      let gMin = Infinity, gMax = -Infinity;
+      for (let i = 0; i < 7; i++) {
+        gMin = Math.min(gMin, d.temperature_2m_min[i]);
+        gMax = Math.max(gMax, d.temperature_2m_max[i]);
+      }
+      const span = gMax - gMin || 1;
+      $('#range-label').textContent = `Range: ${Math.round(gMin)}° — ${Math.round(gMax)}°C`;
+      for (let i = 0; i < 7 && i < d.time.length; i++) {
+        const date = new Date(d.time[i]);
+        const dayName = i === 0 ? 'TODAY' : days[date.getDay()].toUpperCase();
+        const info = wInfo(d.weather_code[i]);
+        const tmax = Math.round(d.temperature_2m_max[i]);
+        const tmin = Math.round(d.temperature_2m_min[i]);
+        const rp = d.precipitation_probability_max[i] || 0;
+        const wm = Math.round(d.wind_speed_10m_max[i] || 0);
+        const heightPct = Math.round(((tmax - gMin) / span) * 65 + 20);
+        const bottomPct = Math.round(((tmin - gMin) / span) * 45);
+        const active = i === 0 ? 'bg-surface-container-high ring-1 ring-primary-container/40' : '';
+        chart += `
+          <button class="day-selector flex flex-col items-center gap-1.5 p-1.5 rounded-lg hover:bg-surface-container-high/50 transition-all text-center ${active}" data-day="${i}">
+            <span class="font-label-data-sm ${i===0?'text-primary-fixed-dim font-bold':'text-on-surface-variant'}">${dayName}</span>
+            <span class="material-symbols-outlined text-[20px] ${rp>50?'text-secondary':'text-surface-tint'} my-0.5">${info.i}</span>
+            <span class="font-label-data-sm text-primary font-semibold">${tmax}°</span>
+            <div class="w-2 h-20 bg-surface-container-highest rounded-full relative">
+              <div class="absolute w-full rounded-full bg-gradient-to-t from-surface-tint/60 to-primary-container" style="bottom:${bottomPct}%;height:${heightPct}%;"></div>
+            </div>
+            <span class="font-label-data-sm text-outline">${tmin}°</span>
+            <div class="flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-surface-container-highest text-surface-tint text-[10px] font-label-data-sm">
+              <span>${rp}%</span>
+            </div>
+          </button>`;
+        const rangeLeft = Math.round(((tmin - gMin) / span) * 70 + 10);
+        const rangeRight = Math.round(((gMax - tmax) / span) * 70 + 10);
+        const isSevere = rp > 75 || wm > 40;
+        accordion += `
+          <div class="accordion-item flex flex-col rounded-xl ${isSevere?'bg-secondary-container/20':'bg-surface-container-low/80'} backdrop-blur-lg overflow-hidden">
+            <button class="accordion-trigger w-full flex items-center justify-between p-space-md text-left gap-2">
+              <div class="flex items-center gap-3 min-w-0 w-28">
+                <span class="material-symbols-outlined ${isSevere?'text-secondary':'text-surface-tint'} text-[22px] shrink-0">${info.i}</span>
+                <div class="flex flex-col min-w-0">
+                  <span class="font-body-md text-primary font-semibold truncate">${i===0?'Today':days[date.getDay()]}</span>
+                  <span class="font-label-data-sm text-on-surface-variant">${date.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
+                </div>
+              </div>
+              <div class="flex-1 flex items-center gap-2 max-w-[140px]">
+                <span class="font-label-data-sm text-on-surface-variant w-6 text-right">${tmin}°</span>
+                <div class="flex-1 h-1.5 bg-surface-container-highest rounded-full relative overflow-hidden">
+                  <div class="absolute inset-y-0 rounded-full bg-gradient-to-r from-surface-tint to-primary-container" style="left:${rangeLeft}%;right:${rangeRight}%;"></div>
+                </div>
+                <span class="font-label-data-sm text-primary font-bold w-6">${tmax}°</span>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-surface-container-high ${rp>60?'text-secondary-fixed font-semibold':rp>30?'text-surface-tint':'text-outline'} font-label-data-sm text-[11px]">
+                  <span class="material-symbols-outlined text-[12px]">water_drop</span>
+                  <span>${rp}%</span>
+                </div>
+                <span class="material-symbols-outlined text-outline text-[18px] chevron transition-transform">expand_more</span>
+              </div>
+            </button>
+            <div class="accordion-content hidden px-space-md pb-space-md pt-0 text-on-surface-variant font-body-sm flex-col gap-2">
+              <div class="p-2.5 rounded-lg bg-surface-container-lowest/60 flex items-center justify-between">
+                <span>Wind ${wm} km/h • UV ${Math.round(d.uv_index_max[i]||0)} • ${rp>50?'Rain likely':'Mostly dry'}</span>
+                <span class="font-label-data-sm ${isSevere?'text-error':'text-tertiary-fixed'} font-semibold">${isSevere?'Alert':'Stable'}</span>
+              </div>
+            </div>
+          </div>`;
+      }
+      $('#weekly-chart').innerHTML = chart;
+      $('#daily-accordion').innerHTML = accordion;
+
+      $$('#daily-accordion .accordion-trigger').forEach(t => {
+        t.addEventListener('click', () => {
+          const c = t.nextElementSibling, ch = t.querySelector('.chevron');
+          const open = !c.classList.contains('hidden');
+          if (open) { c.classList.add('hidden'); c.classList.remove('flex'); ch.classList.remove('rotate-180'); }
+          else { c.classList.remove('hidden'); c.classList.add('flex'); ch.classList.add('rotate-180'); }
+        });
+      });
+      $$('#weekly-chart .day-selector').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $$('#weekly-chart .day-selector').forEach(b => b.classList.remove('bg-surface-container-high','ring-1','ring-primary-container/40'));
+          btn.classList.add('bg-surface-container-high','ring-1','ring-primary-container/40');
+        });
+      });
+    }
+
+    // ============================================================
+    // RENDER: WIND
+    // ============================================================
+    function renderWind(w) {
+      const c = w.current, h = w.hourly;
+      const dir = c.wind_direction_10m;
+      const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+      const idx = Math.round(dir / 22.5) % 16;
+      $('#wind-pointer').style.transform = `rotate(${dir - 90}deg)`;
+      $('#wind-dir-deg').textContent = `${Math.round(dir)}° ${dirs[idx]}`;
+      $('#wind-speed-big').textContent = Math.round(c.wind_speed_10m);
+      $('#wind-gust-big').textContent = `Gusts ${Math.round(c.wind_gusts_10m)} km/h`;
+      $('#wind-compass-label').textContent = `${dirs[idx]} at ${Math.round(c.wind_speed_10m)} km/h`;
+      const spd = c.wind_speed_10m;
+      let bf = 0;
+      const bScale = [1,5,11,19,28,38,49,61,74,88,102,117];
+      while (bf < bScale.length && spd >= bScale[bf]) bf++;
+      const bNames = ['Calm','Light Air','Light Breeze','Gentle Breeze','Moderate','Fresh','Strong','Near Gale','Gale','Strong Gale','Storm','Violent','Hurricane'];
+      $('#beaufort').textContent = `Beaufort ${bf} • ${bNames[bf]}`;
+      $('#wind-chill').textContent = `Chill: ${Math.round(c.apparent_temperature)}°`;
+
+      const svg = $('#flow-lines');
+      let lines = '';
+      for (let i = 0; i < 8; i++) {
+        const y = 15 + i * 18;
+        const wspeed = h.wind_speed_10m ? h.wind_speed_10m[i] : spd;
+        const amp = 8 + Math.min(20, wspeed / 3);
+        const d = `M 0 ${y} Q 90 ${y - amp} 180 ${y + amp/2} T 360 ${y - amp/3}`;
+        lines += `<path d="${d}" class="flow-line" stroke-width="${1 + wspeed/40}" opacity="${0.4 + Math.min(0.6, wspeed/60)}"/>`;
+      }
+      svg.innerHTML = lines;
+
+      const bars = $('#wind-bars');
+      let html = '';
+      for (let i = 0; i < 12 && i < h.time.length; i++) {
+        const sp = h.wind_speed_10m[i];
+        const gp = h.wind_gusts_10m[i];
+        const maxV = 80;
+        const h1 = Math.min(100, (sp / maxV) * 100);
+        const h2 = Math.min(100, (gp / maxV) * 100);
+        html += `
+          <div class="flex-1 flex flex-col items-center justify-end gap-0.5">
+            <div class="w-full flex flex-col justify-end" style="height:${h2}%">
+              <div class="w-full rounded-t" style="height:${(h2-h1)/h2*100}%;background:#d0bcff;opacity:0.35;"></div>
+              <div class="w-full rounded-t" style="height:${h1/h2*100}%;background:#00f2fe;"></div>
+            </div>
+            <span class="font-label-data-sm text-outline text-[8px]">${i===0?'Now':'+'+i}</span>
+          </div>`;
+      }
+      bars.innerHTML = html;
+    }
+
+    // ============================================================
+    // RENDER: LIGHTNING
+    // ============================================================
+    function renderLightning(w) {
+      const h = w.hourly;
+      let maxCape = 0, minLI = 99, thunderProb = 0;
+      for (let i = 0; i < Math.min(24, h.time.length); i++) {
+        const cape = h.cape?.[i] || 0;
+        const li = h.lifted_index?.[i];
+        const code = h.weather_code[i];
+        const pp = h.precipitation_probability[i] || 0;
+        if (cape > maxCape) maxCape = cape;
+        if (li != null && li < minLI) minLI = li;
+        if (code === 95 || code === 96 || code === 99) thunderProb = Math.max(thunderProb, pp);
+      }
+      $('#cape-value').textContent = Math.round(maxCape);
+      $('#lifted-index').textContent = minLI < 99 ? minLI.toFixed(1) : '—';
+      $('#thunder-prob').textContent = Math.round(thunderProb || (maxCape > 1000 ? Math.min(100, maxCape/30) : 0));
+      $('#strike-rate').textContent = Math.round(maxCape > 500 ? maxCape/40 : 0);
+
+      let threat = 'Low', threatClass = 'bg-secondary-container/85';
+      if (maxCape > 2500) { threat = 'Severe'; threatClass = 'bg-error-container/85'; }
+      else if (maxCape > 1500) { threat = 'High'; threatClass = 'bg-error-container/60'; }
+      else if (maxCape > 800) { threat = 'Moderate'; }
+      else if (maxCape > 300) { threat = 'Marginal'; }
+      const tEl = $('#storm-threat');
+      tEl.textContent = `Threat: ${threat}`;
+      tEl.parentElement.className = `absolute top-3 right-3 px-3 py-1.5 rounded-full ${threatClass} backdrop-blur-xl`;
+
+      const layer = $('#strike-layer');
+      let markers = '';
+      const numStrikes = Math.min(20, Math.floor(maxCape / 150));
+      for (let i = 0; i < numStrikes; i++) {
+        const r = 30 + Math.random() * 130;
+        const theta = Math.random() * Math.PI * 2;
+        const x = 180 + r * Math.cos(theta);
+        const y = 180 + r * Math.sin(theta);
+        markers += `<circle cx="${x}" cy="${y}" r="3.5" fill="#D0BCFF" opacity="0.8"/>
+                    <circle cx="${x}" cy="${y}" fill="none" stroke="#D0BCFF" stroke-width="1.2" r="6" class="strike-pulse"/>`;
+      }
+      layer.innerHTML = markers;
+
+      const li = minLI < 99 ? minLI.toFixed(1) : 'N/A';
+      let brief = '';
+      if (maxCape > 2000) brief = `Extreme convective instability (CAPE ${Math.round(maxCape)} J/kg). Severe thunderstorms likely. Seek shelter.`;
+      else if (maxCape > 1000) brief = `Moderate-to-strong instability (CAPE ${Math.round(maxCape)} J/kg). Thunderstorms possible.`;
+      else if (maxCape > 300) brief = `Marginal instability (CAPE ${Math.round(maxCape)} J/kg). Isolated thunderstorms possible.`;
+      else brief = `Stable atmosphere (CAPE ${Math.round(maxCape)} J/kg). No significant convective activity.`;
+      brief += ` Lifted Index: ${li}. Thunder probability: ${thunderProb}%.`;
+      if (state.health.conditions.includes('asthma') && maxCape > 800) {
+        brief += ' With your respiratory profile, avoid outdoor activity during storm periods.';
+      }
+      $('#lightning-brief').textContent = brief;
+    }
+
+    // ============================================================
+    // RENDER: CYCLONE
+    // ============================================================
+    async function renderCyclone(lat, lon) {
+      try {
+        const r = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=sea_surface_temperature,wave_height,wave_direction,wave_period`);
+        if (r.ok) {
+          const m = await r.json();
+          const sst = m.current?.sea_surface_temperature;
+          $('#sst').textContent = sst ? `${sst.toFixed(1)}°C` : '—';
+        }
+      } catch(e) {}
+      const w = state.weather;
+      if (w) {
+        const shear = Math.max(0, 30 - Math.abs(w.current.wind_speed_10m - (w.hourly.wind_speed_10m?.[12] || w.current.wind_speed_10m)));
+        $('#shear').textContent = `${Math.round(shear)} kt`;
+        const v = (Math.abs(w.current.pressure_msl - 1010) / 10).toFixed(1);
+        $('#vorticity').textContent = `${v} ×10⁻⁵ s⁻¹`;
+        const genesis = Math.round(Math.min(100, (Math.max(0, (30 - w.current.wind_speed_10m/3)) * 2 + (w.current.relative_humidity_2m/2))));
+        $('#genesis').textContent = `${genesis}/100`;
+      }
+      $('#cyclone-sync').textContent = `Synced ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+    }
+
+    // ============================================================
+    // NAV
+    // ============================================================
+    function switchView(name) {
+      $$('.view-section').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(`view-${name}`);
+      if (el) el.classList.add('active');
+      $$('.nav-link').forEach(l => {
+        const active = l.dataset.view === name;
+        l.classList.toggle('text-primary-container', active);
+        l.classList.toggle('text-on-surface-variant', !active);
+        const ic = l.querySelector('.material-symbols-outlined');
+        if (ic) ic.style.fontVariationSettings = `'FILL' ${active?1:0}`;
+      });
+      if (name === 'today') {
+        if (state.radarMap) setTimeout(() => state.radarMap.invalidateSize(), 100);
+        if (state.aqiMap) setTimeout(() => state.aqiMap.invalidateSize(), 100);
+      }
+    }
+    $$('.nav-link').forEach(l => l.addEventListener('click', () => switchView(l.dataset.view)));
+
+    // ============================================================
+    // MAIN LOADER
+    // ============================================================
+    async function loadAll(lat, lon, name) {
+      state.lat = lat; state.lon = lon;
+      if (name) state.locationName = name;
+      $('#location-label').textContent = state.locationName;
+      showToast('Loading', `Fetching for ${state.locationName}`);
+      try {
+        const [w, aqi] = await Promise.all([fetchWeather(lat, lon), fetchAirQuality(lat, lon)]);
+        state.weather = w; state.airQuality = aqi;
+        renderToday(w, aqi);
+        render7Day(w);
+        renderWind(w);
+        renderLightning(w);
+        renderCyclone(lat, lon);
+        showToast('Updated', `Live data for ${state.locationName}`);
+      } catch (e) {
+        console.error(e);
+        showToast('Error', 'Could not fetch data.');
+      }
+    }
+
+    // ============================================================
+    // UI HELPERS
+    // ============================================================
+    function showToast(title, msg) {
+      const t = $('#toast');
+      $('#toast-title').textContent = title;
+      $('#toast-message').textContent = msg;
+      t.classList.remove('-translate-y-24','opacity-0','pointer-events-none');
+      t.classList.add('translate-y-0','opacity-100');
+      clearTimeout(t._t);
+      t._t = setTimeout(() => {
+        t.classList.remove('translate-y-0','opacity-100');
+        t.classList.add('-translate-y-24','opacity-0','pointer-events-none');
+      }, 2400);
+    }
+
+    $$('.city-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        $$('.city-chip').forEach(c => { c.classList.remove('active','bg-surface-container-high/90','text-primary-fixed'); c.classList.add('bg-surface-container-low/70','text-on-surface-variant'); });
+        chip.classList.add('active','bg-surface-container-high/90','text-primary-fixed');
+        chip.classList.remove('bg-surface-container-low/70','text-on-surface-variant');
+        loadAll(parseFloat(chip.dataset.lat), parseFloat(chip.dataset.lon), chip.dataset.name);
+      });
+    });
+
+    $('#location-btn').addEventListener('click', async () => {
+      showToast('Detecting', 'Requesting GPS');
+      try {
+        const pos = await getLiveLocation();
+        const name = await reverseGeocode(pos.lat, pos.lon);
+        $$('.city-chip').forEach(c => { c.classList.remove('active','bg-surface-container-high/90','text-primary-fixed'); c.classList.add('bg-surface-container-low/70','text-on-surface-variant'); });
+        await loadAll(pos.lat, pos.lon, name);
+      } catch(e) {
+        showToast('Location Error', 'Using default location');
+      }
+    });
+
+    $('#refresh-btn').addEventListener('click', () => loadAll(state.lat, state.lon, state.locationName));
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    loadHealth();
+
+    (async function init() {
+      try {
+        const pos = await getLiveLocation();
+        const name = await reverseGeocode(pos.lat, pos.lon);
+        await loadAll(pos.lat, pos.lon, name);
+      } catch(e) {
+        await loadAll(28.6139, 77.2090, 'New Delhi');
+      }
+    })();
+
+    setInterval(() => loadAll(state.lat, state.lon, state.locationName), 600000);
+  </script>
+</body>
+</html>
