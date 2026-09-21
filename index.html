@@ -95,13 +95,136 @@
       display: flex; align-items: center; justify-content: center;
       color: #00373a; font-weight: 700; font-size: 15px;
     }
+    /* Chat bubble */
+    #chat-bubble {
+      position: fixed;
+      width: 56px; height: 56px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, #00f2fe 0%, #00dce6 100%);
+      color: #00373a;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(0, 242, 254, 0.4), 0 0 0 0 rgba(0, 242, 254, 0.5);
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      z-index: 55;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    #chat-bubble:active { cursor: grabbing; }
+    #chat-bubble.pulse {
+      animation: bubblePulse 2.4s ease-in-out infinite;
+    }
+    @keyframes bubblePulse {
+      0%, 100% { box-shadow: 0 8px 24px rgba(0, 242, 254, 0.4), 0 0 0 0 rgba(0, 242, 254, 0.6); }
+      50% { box-shadow: 0 8px 24px rgba(0, 242, 254, 0.6), 0 0 0 12px rgba(0, 242, 254, 0); }
+    }
+    #chat-panel {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 82vh;
+      max-height: 720px;
+      background: #0f131d;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 70;
+      display: flex; flex-direction: column;
+      box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.6);
+    }
+    #chat-panel.open { transform: translateY(0); }
+    #chat-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 65;
+    }
+    #chat-backdrop.open { opacity: 1; pointer-events: auto; }
+    #chat-messages { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+    #chat-messages::-webkit-scrollbar { display: none; }
+    .chat-bubble-user {
+      background: #262a35;
+      color: #dfe2f1;
+      border-radius: 18px 18px 4px 18px;
+      padding: 10px 14px;
+      max-width: 80%;
+      align-self: flex-end;
+      font-size: 14px; line-height: 1.5;
+      word-wrap: break-word; white-space: pre-wrap;
+    }
+    .chat-bubble-ai {
+      background: #171b26;
+      color: #dfe2f1;
+      border-left: 3px solid #00f2fe;
+      border-radius: 4px 18px 18px 18px;
+      padding: 10px 14px;
+      max-width: 85%;
+      align-self: flex-start;
+      font-size: 14px; line-height: 1.5;
+      word-wrap: break-word; white-space: pre-wrap;
+    }
+    .chat-bubble-error {
+      background: #2a1417;
+      color: #ffdad6;
+      border-left: 3px solid #ffb4ab;
+      border-radius: 4px 18px 18px 18px;
+      padding: 10px 14px;
+      max-width: 85%;
+      align-self: flex-start;
+      font-size: 13px; line-height: 1.5;
+    }
+    .typing-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #00f2fe;
+      animation: typingBounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+    #chat-input {
+      background: transparent;
+      border: none;
+      color: #dfe2f1;
+      font-size: 14px;
+      width: 100%;
+      resize: none;
+      max-height: 100px;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+    #chat-input:focus { outline: none; }
+    #chat-input::placeholder { color: #849495; }
+    .chat-starter-chip {
+      background: #1c1f2a;
+      color: #b9cacb;
+      border: 1px solid #313540;
+      border-radius: 9999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chat-starter-chip:hover {
+      background: #262a35;
+      color: #e0fdff;
+      border-color: #00f2fe;
+    }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="bg-surface font-body-md text-body-md flex flex-col min-h-screen">
 
-  <!-- ===== TOP APP BAR ===== -->
+  <!-- TOP APP BAR -->
   <header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
     <div class="h-16 px-margin flex items-center justify-between gap-space-sm">
       <div class="flex items-center gap-space-sm min-w-0 flex-1">
@@ -125,11 +248,11 @@
     </div>
   </header>
 
-  <!-- ===== MAIN ===== -->
+  <!-- MAIN -->
   <main class="flex flex-col relative w-full pt-16 bg-surface">
     <div id="app-content" class="flex flex-col w-full text-on-surface pb-28">
 
-      <!-- ============ VIEW 1: TODAY ============ -->
+      <!-- VIEW 1: TODAY -->
       <section id="view-today" class="view-section active">
         <div class="px-margin pt-space-xs space-y-space-md">
 
@@ -167,7 +290,6 @@
             <button class="city-chip flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low/70 text-on-surface-variant shrink-0" data-lat="13.0827" data-lon="80.2707" data-name="Chennai"><span class="font-label-data-md">Chennai</span></button>
           </div>
 
-          <!-- HERO -->
           <div class="relative overflow-hidden rounded-xl bg-gradient-to-b from-surface-container/70 via-surface-container-low/60 to-surface-container-lowest/80 backdrop-blur-2xl p-space-lg shadow-xl">
             <div class="flex items-center justify-between gap-2 mb-space-md">
               <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/60">
@@ -211,7 +333,6 @@
             </div>
           </div>
 
-          <!-- Alert -->
           <div id="alert-section" class="relative overflow-hidden rounded-xl bg-surface-container-low/90 backdrop-blur-xl p-space-md shadow-lg hidden">
             <div id="alert-rail" class="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-error to-secondary-container"></div>
             <div class="pl-2">
@@ -235,7 +356,6 @@
             </div>
           </div>
 
-          <!-- AI Brief -->
           <div class="relative overflow-hidden rounded-xl bg-surface-container/70 backdrop-blur-2xl p-space-md shadow-xl">
             <div class="flex items-center justify-between gap-2 pb-2.5">
               <div class="flex items-center gap-2">
@@ -261,7 +381,6 @@
             </div>
           </div>
 
-          <!-- Hourly -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <h3 class="font-headline-sm text-on-surface">24-Hour Telemetry Arc</h3>
@@ -270,7 +389,6 @@
             <div id="hourly-scroll" class="flex items-stretch gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-1"></div>
           </div>
 
-          <!-- Telemetry Grid -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <h3 class="font-headline-sm text-on-surface">Multi-Sensor Telemetry</h3>
@@ -320,7 +438,6 @@
             </div>
           </div>
 
-          <!-- Radar (Precipitation) -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -345,7 +462,6 @@
             </div>
           </div>
 
-          <!-- AQI Map -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -378,7 +494,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 2: 7-DAY ============ -->
+      <!-- VIEW 2: 7-DAY -->
       <section id="view-7day" class="view-section">
         <div class="px-margin pt-space-xs space-y-space-md">
           <div>
@@ -404,7 +520,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 3: WIND ============ -->
+      <!-- VIEW 3: WIND -->
       <section id="view-wind" class="view-section">
         <div class="px-margin pt-space-xs space-y-space-md">
           <div>
@@ -486,7 +602,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 4: LIGHTNING ============ -->
+      <!-- VIEW 4: LIGHTNING -->
       <section id="view-lightning" class="view-section">
         <div class="px-margin pt-space-xs space-y-space-md">
           <div>
@@ -583,7 +699,7 @@
         </div>
       </section>
 
-      <!-- ============ VIEW 5: CYCLONE ============ -->
+      <!-- VIEW 5: CYCLONE -->
       <section id="view-cyclone" class="view-section">
         <div class="px-margin pt-space-xs space-y-space-md">
           <div>
@@ -658,7 +774,7 @@
     </div>
   </main>
 
-  <!-- ============ HEALTH PROFILE BOTTOM SHEET ============ -->
+  <!-- HEALTH PROFILE SHEET -->
   <div id="health-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] opacity-0 pointer-events-none transition-opacity duration-300"></div>
   <div id="health-sheet" class="sheet fixed bottom-0 inset-x-0 z-[80] bg-surface-container-low rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.6)] pb-safe max-h-[85vh] overflow-y-auto">
     <div class="sticky top-0 bg-surface-container-low pt-3 pb-2 px-margin z-10">
@@ -680,7 +796,6 @@
     </div>
 
     <div class="px-margin py-4 space-y-4">
-
       <div class="rounded-xl bg-surface-container/60 p-3 flex items-start gap-2.5">
         <span class="material-symbols-outlined text-surface-tint text-[18px] mt-0.5">lock</span>
         <p class="font-body-sm text-on-surface-variant leading-relaxed">
@@ -717,7 +832,6 @@
       <div class="space-y-2">
         <label class="font-label-data-sm text-outline uppercase tracking-wider block">Health Conditions</label>
         <div class="space-y-1.5">
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="asthma">
             <div class="flex-1">
@@ -726,7 +840,6 @@
             </div>
             <span class="material-symbols-outlined text-surface-tint text-[18px]">pulmonology</span>
           </label>
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="heart">
             <div class="flex-1">
@@ -735,7 +848,6 @@
             </div>
             <span class="material-symbols-outlined text-secondary text-[18px]">cardiology</span>
           </label>
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="allergies">
             <div class="flex-1">
@@ -744,7 +856,6 @@
             </div>
             <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">spa</span>
           </label>
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="pregnancy">
             <div class="flex-1">
@@ -753,7 +864,6 @@
             </div>
             <span class="material-symbols-outlined text-surface-tint text-[18px]">pregnant_woman</span>
           </label>
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="diabetes">
             <div class="flex-1">
@@ -762,7 +872,6 @@
             </div>
             <span class="material-symbols-outlined text-secondary text-[18px]">water_drop</span>
           </label>
-
           <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high cursor-pointer transition-colors">
             <input type="checkbox" class="health-check" data-cond="outdoor">
             <div class="flex-1">
@@ -771,7 +880,6 @@
             </div>
             <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">directions_run</span>
           </label>
-
         </div>
       </div>
 
@@ -783,11 +891,65 @@
           Save & Apply
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- ===== BOTTOM NAV ===== -->
+  <!-- CHAT BUBBLE -->
+  <button id="chat-bubble" aria-label="Open Mausam AI chat" class="pulse">
+    <span class="material-symbols-outlined text-[26px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+  </button>
+
+  <!-- CHAT BACKDROP -->
+  <div id="chat-backdrop"></div>
+
+  <!-- CHAT PANEL -->
+  <div id="chat-panel">
+    <!-- Header -->
+    <div id="chat-header" class="pt-3 pb-2 px-margin border-b border-surface-variant/40 shrink-0">
+      <div class="w-10 h-1 rounded-full bg-outline mx-auto mb-3" id="chat-drag-handle"></div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-primary-container/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary-fixed text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+          </div>
+          <div>
+            <h2 class="font-headline-sm text-primary">Mausam AI</h2>
+            <div class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+              <span id="chat-model-label" class="font-label-data-sm text-on-surface-variant">GPT-OSS 120B • Live</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button id="chat-clear-btn" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" title="Clear chat">
+            <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+          </button>
+          <button id="chat-close-btn" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="chat-messages" class="px-margin py-3 flex flex-col gap-3">
+      <!-- Empty state injected by JS -->
+    </div>
+
+    <!-- Input -->
+    <div class="pb-safe px-margin pt-2 pb-3 border-t border-surface-variant/40 bg-surface-container-lowest/50 shrink-0">
+      <div class="flex items-end gap-2">
+        <div class="flex-1 rounded-2xl bg-surface-container-high/90 px-3 py-2 min-h-[44px] flex items-center">
+          <textarea id="chat-input" rows="1" placeholder="Ask about the weather…" maxlength="500"></textarea>
+        </div>
+        <button id="chat-send-btn" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-primary-container to-surface-tint flex items-center justify-center text-on-primary shrink-0 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-transform">
+          <span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
   <nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/85 backdrop-blur-2xl shadow-[0_-4px_24px_rgba(0,0,0,0.4)]">
     <div class="flex justify-around items-center h-16 px-space-xs">
       <button class="nav-link active flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-primary-container" data-view="today">
@@ -828,9 +990,7 @@
 
   <script>
     // ============================================================
-    // MAUSAM — Full App Logic
-    // Weather + AQI: Open-Meteo  •  Maps: OSM + Open-Meteo blobs
-    // Health profile: localStorage → personalized thresholds
+    // MAUSAM — Full App Logic + AI Chat
     // ============================================================
 
     const state = {
@@ -888,7 +1048,6 @@
         $('#health-badge').classList.add('hidden');
         $('#health-banner').classList.add('hidden');
       }
-
       $$('.age-btn').forEach(b => {
         if (b.dataset.age === state.health.age) {
           b.classList.add('bg-primary-container/20', 'ring-1', 'ring-primary-container/40');
@@ -1139,7 +1298,7 @@
     }
 
     // ============================================================
-    // AQI MAP — CPCB India scale
+    // AQI MAP
     // ============================================================
     function cpcbColor(aqi) {
       if (aqi == null)     return { color: '#849495', label: '—' };
@@ -1150,7 +1309,6 @@
       if (aqi <= 400)      return { color: '#cc0022', label: 'Very Poor' };
       return                      { color: '#8b0033', label: 'Severe' };
     }
-
     function subIndexCPCB(value, breakpoints, indices) {
       if (value == null) return null;
       const v = Math.max(0, value);
@@ -1163,7 +1321,6 @@
       }
       return indices[indices.length - 1];
     }
-
     function calcCPCB_AQI(pm25, pm10) {
       const aqi25 = subIndexCPCB(pm25, [0,30,60,90,120,250],   [0,50,100,200,300,400]);
       const aqi10 = subIndexCPCB(pm10, [0,50,100,250,350,430], [0,50,100,200,300,400]);
@@ -1171,7 +1328,6 @@
       if (c.length === 0) return null;
       return Math.round(Math.max(...c));
     }
-
     async function initAqiMap(lat, lon) {
       if (state.aqiMap) {
         state.aqiMap.setView([lat, lon], 7);
@@ -1189,7 +1345,6 @@
       if (state.aqiTimer) clearInterval(state.aqiTimer);
       state.aqiTimer = setInterval(() => refreshAqiOverlay(state.lat, state.lon), 300000);
     }
-
     async function refreshAqiOverlay(lat, lon) {
       if (!state.aqiMap || !state.aqiLayer) return;
       try {
@@ -1198,7 +1353,6 @@
         for (let dy = -2; dy <= 2; dy++)
           for (let dx = -2; dx <= 2; dx++)
             grid.push([lat + dy * step, lon + dx * step]);
-
         const lats = grid.map(g => g[0].toFixed(4)).join(',');
         const lons = grid.map(g => g[1].toFixed(4)).join(',');
         const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}&current=pm2_5,pm10&timezone=Asia/Kolkata`;
@@ -1208,7 +1362,6 @@
         const results = Array.isArray(data) ? data : [data];
 
         state.aqiLayer.clearLayers();
-
         let maxAqi = 0;
         let worstPoint = null;
         const thresholds = getThresholds();
@@ -1219,17 +1372,11 @@
           const aqi = calcCPCB_AQI(pm25, pm10);
           if (aqi == null) return;
           if (aqi > maxAqi) { maxAqi = aqi; worstPoint = grid[idx]; }
-
           const { color } = cpcbColor(aqi);
           const [glat, glon] = grid[idx];
           const radius = 14000 + Math.min(18000, aqi * 40);
           const opacity = 0.20 + Math.min(0.35, aqi / 1500);
-
-          L.circle([glat, glon], {
-            radius, color, fillColor: color, fillOpacity: opacity, weight: 1
-          }).addTo(state.aqiLayer);
-
-          // Dashed warning ring for user's personal threshold
+          L.circle([glat, glon], { radius, color, fillColor: color, fillOpacity: opacity, weight: 1 }).addTo(state.aqiLayer);
           if (aqi >= thresholds.aqiWarn) {
             L.circle([glat, glon], {
               radius: radius + 8000, color, fillColor: 'transparent',
@@ -1261,7 +1408,7 @@
     }
 
     // ============================================================
-    // AQI CALC (used in header)
+    // AQI CALC (header)
     // ============================================================
     function calcAQI(pm25) {
       if (pm25 == null) return { v: null, l: '—' };
@@ -1291,20 +1438,20 @@
       const fragile = h.age === 'child' || h.age === 'senior' || h.conditions.includes('pregnancy');
       const outdoor = h.conditions.includes('outdoor');
       return {
-        aqiWatch:    resp || cardiac || fragile ? 60 : 100,
-        aqiWarn:     resp || cardiac || fragile ? 100 : 200,
-        heatWatch:   fragile ? 35 : 38,
-        heatWarn:    fragile ? 40 : 42,
-        coldWatch:   fragile ? 12 : 8,
-        coldWarn:    fragile ? 6 : 2,
-        uvWatch:     h.age === 'child' || outdoor ? 5 : 7,
-        uvWarn:      h.age === 'child' || outdoor ? 8 : 10,
-        gustWatch:   outdoor ? 35 : 45,
-        gustWarn:    outdoor ? 50 : 60,
-        rainWatch:   outdoor ? 50 : 60,
-        rainWarn:    outdoor ? 75 : 85,
-        capeWatch:   outdoor ? 800 : 1200,
-        capeWarn:    outdoor ? 1800 : 2500,
+        aqiWatch: resp || cardiac || fragile ? 60 : 100,
+        aqiWarn: resp || cardiac || fragile ? 100 : 200,
+        heatWatch: fragile ? 35 : 38,
+        heatWarn: fragile ? 40 : 42,
+        coldWatch: fragile ? 12 : 8,
+        coldWarn: fragile ? 6 : 2,
+        uvWatch: h.age === 'child' || outdoor ? 5 : 7,
+        uvWarn: h.age === 'child' || outdoor ? 8 : 10,
+        gustWatch: outdoor ? 35 : 45,
+        gustWarn: outdoor ? 50 : 60,
+        rainWatch: outdoor ? 50 : 60,
+        rainWarn: outdoor ? 75 : 85,
+        capeWatch: outdoor ? 800 : 1200,
+        capeWarn: outdoor ? 1800 : 2500,
         fragile, resp, cardiac, outdoor
       };
     }
@@ -1760,9 +1907,396 @@
     $('#refresh-btn').addEventListener('click', () => loadAll(state.lat, state.lon, state.locationName));
 
     // ============================================================
+    // CHAT — Draggable bubble + Panel
+    // ============================================================
+
+    const CHAT_POS_KEY = 'mausam_chat_pos_v1';
+    const CHAT_HIST_KEY = 'mausam_chat_history_v1';
+    const CHAT_MAX_HISTORY = 20;
+
+    const chatBubble = $('#chat-bubble');
+    const chatPanel = $('#chat-panel');
+    const chatBackdrop = $('#chat-backdrop');
+    const chatMessages = $('#chat-messages');
+    const chatInput = $('#chat-input');
+    const chatSendBtn = $('#chat-send-btn');
+    const chatCloseBtn = $('#chat-close-btn');
+    const chatClearBtn = $('#chat-clear-btn');
+
+    let chatHistory = [];
+    let isSending = false;
+
+    function loadChatPosition() {
+      try {
+        const raw = localStorage.getItem(CHAT_POS_KEY);
+        if (raw) {
+          const pos = JSON.parse(raw);
+          if (pos && typeof pos.x === 'number' && typeof pos.y === 'number') {
+            applyBubblePosition(pos.x, pos.y);
+            return;
+          }
+        }
+      } catch (e) {}
+      // Default: bottom-right above nav
+      const defaultX = window.innerWidth - 56 - 16;
+      const defaultY = window.innerHeight - 56 - 90;
+      applyBubblePosition(defaultX, defaultY);
+    }
+
+    function applyBubblePosition(x, y) {
+      const maxX = window.innerWidth - 56 - 8;
+      const maxY = window.innerHeight - 56 - 8;
+      x = Math.max(8, Math.min(maxX, x));
+      y = Math.max(70, Math.min(maxY, y));
+      chatBubble.style.left = x + 'px';
+      chatBubble.style.top = y + 'px';
+      chatBubble.style.right = 'auto';
+      chatBubble.style.bottom = 'auto';
+    }
+
+    function saveBubblePosition() {
+      const rect = chatBubble.getBoundingClientRect();
+      try {
+        localStorage.setItem(CHAT_POS_KEY, JSON.stringify({ x: rect.left, y: rect.top }));
+      } catch (e) {}
+    }
+
+    // Drag logic
+    let isDragging = false;
+    let dragStartX = 0, dragStartY = 0;
+    let bubbleStartX = 0, bubbleStartY = 0;
+    let dragMoved = false;
+
+    chatBubble.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      dragMoved = false;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      const rect = chatBubble.getBoundingClientRect();
+      bubbleStartX = rect.left;
+      bubbleStartY = rect.top;
+      chatBubble.setPointerCapture(e.pointerId);
+      chatBubble.style.transition = 'none';
+    });
+
+    chatBubble.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragMoved = true;
+      applyBubblePosition(bubbleStartX + dx, bubbleStartY + dy);
+    });
+
+    chatBubble.addEventListener('pointerup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      chatBubble.style.transition = '';
+      const rect = chatBubble.getBoundingClientRect();
+      // Snap to nearest horizontal edge
+      const centerX = rect.left + rect.width / 2;
+      const snapToRight = centerX > window.innerWidth / 2;
+      const targetX = snapToRight ? (window.innerWidth - rect.width - 12) : 12;
+      const targetY = Math.max(70, Math.min(window.innerHeight - rect.height - 90, rect.top));
+      applyBubblePosition(targetX, targetY);
+      saveBubblePosition();
+      if (!dragMoved) {
+        // It was a tap — open chat
+        openChat();
+      }
+    });
+
+    // Re-position on resize
+    window.addEventListener('resize', () => {
+      const rect = chatBubble.getBoundingClientRect();
+      // Snap to nearest edge
+      const centerX = rect.left + rect.width / 2;
+      const snapToRight = centerX > window.innerWidth / 2;
+      const targetX = snapToRight ? (window.innerWidth - rect.width - 12) : 12;
+      const targetY = Math.max(70, Math.min(window.innerHeight - rect.height - 90, rect.top));
+      applyBubblePosition(targetX, targetY);
+    });
+
+    // ============================================================
+    // CHAT — Panel open/close
+    // ============================================================
+    function openChat() {
+      chatPanel.classList.add('open');
+      chatBackdrop.classList.add('open');
+      chatBubble.classList.remove('pulse');
+      renderChatMessages();
+      setTimeout(() => chatInput.focus(), 300);
+      scrollChatToBottom();
+    }
+
+    function closeChat() {
+      chatPanel.classList.remove('open');
+      chatBackdrop.classList.remove('open');
+    }
+
+    chatCloseBtn.addEventListener('click', closeChat);
+    chatBackdrop.addEventListener('click', closeChat);
+
+    // Swipe-down to close on drag handle
+    let panelDragStartY = 0;
+    let panelDragging = false;
+    $('#chat-drag-handle').addEventListener('pointerdown', (e) => {
+      panelDragging = true;
+      panelDragStartY = e.clientY;
+      chatPanel.style.transition = 'none';
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!panelDragging) return;
+      const dy = e.clientY - panelDragStartY;
+      if (dy > 0) {
+        chatPanel.style.transform = `translateY(${dy}px)`;
+      }
+    });
+    window.addEventListener('pointerup', (e) => {
+      if (!panelDragging) return;
+      panelDragging = false;
+      chatPanel.style.transition = '';
+      chatPanel.style.transform = '';
+      const dy = e.clientY - panelDragStartY;
+      if (dy > 100) closeChat();
+    });
+
+    // ============================================================
+    // CHAT — History persistence
+    // ============================================================
+    function loadChatHistory() {
+      try {
+        const raw = localStorage.getItem(CHAT_HIST_KEY);
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) {
+            chatHistory = arr.slice(-CHAT_MAX_HISTORY);
+          }
+        }
+      } catch (e) {}
+    }
+    function saveChatHistory() {
+      try {
+        const trimmed = chatHistory.slice(-CHAT_MAX_HISTORY);
+        localStorage.setItem(CHAT_HIST_KEY, JSON.stringify(trimmed));
+      } catch (e) {}
+    }
+
+    // ============================================================
+    // CHAT — Build context from live data
+    // ============================================================
+    function buildContextMessage() {
+      const w = state.weather;
+      const aqi = state.airQuality;
+      if (!w) {
+        return 'No live weather data loaded yet. Give general advice based on the user\'s question.';
+      }
+      const c = w.current, d = w.daily;
+      const aqiVal = aqi?.current ? calcAQI(aqi.current.pm2_5).v : null;
+      const now = new Date();
+      const timeStr = now.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+      let ctx = `You are Mausam AI, a helpful weather assistant for India. Answer questions in 1-3 short sentences using the live data below. Always use °C and km/h. Be conversational, not robotic.\n\n`;
+      ctx += `LOCATION: ${state.locationName} (${state.lat.toFixed(2)}, ${state.lon.toFixed(2)})\n`;
+      ctx += `TIME: ${timeStr} IST\n`;
+      ctx += `CURRENT: ${Math.round(c.temperature_2m)}°C, feels like ${Math.round(c.apparent_temperature)}°C, ${c.relative_humidity_2m}% humidity, ${wInfo(c.weather_code).d}\n`;
+      ctx += `TODAY: High ${Math.round(d.temperature_2m_max[0])}°, Low ${Math.round(d.temperature_2m_min[0])}°, ${d.precipitation_probability_max[0] || 0}% rain chance\n`;
+      ctx += `WIND: ${Math.round(c.wind_speed_10m)} km/h, gusts ${Math.round(c.wind_gusts_10m)} km/h\n`;
+      if (aqiVal !== null) ctx += `AQI: ${aqiVal} (${calcAQI(aqi.current.pm2_5).l})\n`;
+      ctx += `UV today: ${Math.round(d.uv_index_max[0] || 0)}\n`;
+      ctx += `PRECIP LAST 24H: ${(d.precipitation_sum[0] || 0).toFixed(1)} mm\n`;
+
+      if (isSensitive()) {
+        ctx += `\nUSER HEALTH PROFILE:\n`;
+        if (state.health.age) ctx += `- Age group: ${state.health.age}\n`;
+        if (state.health.conditions.length > 0) {
+          ctx += `- Conditions: ${state.health.conditions.map(healthLabel).join(', ')}\n`;
+        }
+        ctx += `Consider these when giving safety advice.\n`;
+      } else {
+        ctx += `\nUSER HEALTH PROFILE: not set\n`;
+      }
+
+      return ctx;
+    }
+
+    // ============================================================
+    // CHAT — Render messages
+    // ============================================================
+    function renderChatMessages() {
+      if (chatHistory.length === 0) {
+        chatMessages.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-8 gap-3">
+            <div class="w-14 h-14 rounded-full bg-primary-container/15 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary-fixed text-[28px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+            </div>
+            <p class="font-headline-sm text-on-surface text-center">Ask me anything about the weather</p>
+            <p class="font-body-sm text-on-surface-variant text-center max-w-xs">I know your location, current conditions, air quality${isSensitive() ? ', and your health profile' : ''}.</p>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar w-full pt-3 -mx-margin px-margin">
+              <button class="chat-starter-chip">Will it rain today?</button>
+              <button class="chat-starter-chip">Is the air safe?</button>
+              <button class="chat-starter-chip">Best time for a walk?</button>
+              <button class="chat-starter-chip">Should I carry an umbrella?</button>
+            </div>
+          </div>
+        `;
+        $$('.chat-starter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            chatInput.value = chip.textContent;
+            chatInput.focus();
+            autoGrowInput();
+          });
+        });
+        return;
+      }
+
+      let html = '';
+      chatHistory.forEach(msg => {
+        if (msg.role === 'user') {
+          html += `<div class="chat-bubble-user">${escapeHtml(msg.content)}</div>`;
+        } else if (msg.role === 'assistant') {
+          html += `<div class="chat-bubble-ai">${escapeHtml(msg.content)}</div>`;
+        } else if (msg.role === 'error') {
+          html += `<div class="chat-bubble-error">${escapeHtml(msg.content)}</div>`;
+        }
+      });
+      chatMessages.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showTypingIndicator() {
+      const div = document.createElement('div');
+      div.id = 'typing-indicator';
+      div.className = 'chat-bubble-ai flex items-center gap-1.5';
+      div.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+      chatMessages.appendChild(div);
+      scrollChatToBottom();
+    }
+    function hideTypingIndicator() {
+      const el = document.getElementById('typing-indicator');
+      if (el) el.remove();
+    }
+
+    function scrollChatToBottom() {
+      requestAnimationFrame(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    }
+
+    // ============================================================
+    // CHAT — Input handling
+    // ============================================================
+    function autoGrowInput() {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+    }
+    chatInput.addEventListener('input', autoGrowInput);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+    chatSendBtn.addEventListener('click', sendChatMessage);
+
+    async function sendChatMessage() {
+      if (isSending) return;
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      isSending = true;
+      chatSendBtn.disabled = true;
+      chatInput.value = '';
+      autoGrowInput();
+
+      // Add user message
+      chatHistory.push({ role: 'user', content: text });
+      saveChatHistory();
+      renderChatMessages();
+      scrollChatToBottom();
+
+      // Show typing
+      showTypingIndicator();
+
+      try {
+        // Build API messages: system context + last few turns
+        const contextMsg = buildContextMessage();
+        const recentHistory = chatHistory
+          .filter(m => m.role === 'user' || m.role === 'assistant')
+          .slice(-8);
+
+        const apiMessages = [
+          { role: 'system', content: contextMsg },
+          ...recentHistory
+        ];
+
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: apiMessages, max_tokens: 300 })
+        });
+
+        const data = await res.json();
+        hideTypingIndicator();
+
+        if (!res.ok || !data.choices || !data.choices[0]) {
+          const errMsg = data?.error?.message || data?.error || 'Could not reach AI. Try again.';
+          chatHistory.push({ role: 'error', content: errMsg });
+          saveChatHistory();
+          renderChatMessages();
+          scrollChatToBottom();
+          return;
+        }
+
+        const reply = data.choices[0].message?.content?.trim() || '(empty reply)';
+        chatHistory.push({ role: 'assistant', content: reply });
+        if (data._model_used) {
+          const shortName = data._model_used.includes('120b') ? 'GPT-OSS 120B'
+            : data._model_used.includes('20b') ? 'GPT-OSS 20B'
+            : data._model_used.includes('llama-3.3') ? 'Llama 3.3 70B'
+            : data._model_used.includes('llama-3.1') ? 'Llama 3.1 8B'
+            : data._model_used;
+          $('#chat-model-label').textContent = `${shortName} • Live`;
+        }
+        saveChatHistory();
+        renderChatMessages();
+        scrollChatToBottom();
+
+      } catch (err) {
+        hideTypingIndicator();
+        chatHistory.push({ role: 'error', content: 'Network error. Check connection and try again.' });
+        saveChatHistory();
+        renderChatMessages();
+        scrollChatToBottom();
+      } finally {
+        isSending = false;
+        chatSendBtn.disabled = false;
+        chatInput.focus();
+      }
+    }
+
+    // Clear chat
+    chatClearBtn.addEventListener('click', () => {
+      if (confirm('Clear all messages?')) {
+        chatHistory = [];
+        saveChatHistory();
+        renderChatMessages();
+      }
+    });
+
+    // ============================================================
     // INIT
     // ============================================================
     loadHealth();
+    loadChatPosition();
+    loadChatHistory();
 
     (async function init() {
       try {
