@@ -3,12 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
-  <meta name="description" content="Mausam — hyperlocal weather intelligence for India: live precipitation radar, AQI maps, lightning diagnostics, cyclone tracking, health-aware alerts and an AI brief.">
-  <meta name="theme-color" content="#0f131d">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f131d%22/%3E%3Cpath%20d%3D%22M20%2040a10%2010%200%201%201%204-19%2013%2013%200%200%201%2025%206%208%208%200%200%201-6%2013z%22%20fill%3D%22%2300f2fe%22/%3E%3Cpath%20d%3D%22M26%2046l-3%208M36%2046l-3%208%22%20stroke%3D%22%23d0bcff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
   <title>Mausam — Hyperlocal Weather Intelligence</title>
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -74,10 +68,6 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     body { min-height: max(884px, 100dvh); }
-    @media (prefers-reduced-motion: reduce) {
-      .animate-pulse-glow, .animate-spin-slow, .strike-pulse, .flow-line, #chat-bubble.pulse { animation: none !important; }
-      .sheet, #chat-panel, #chat-bubble { transition: none !important; }
-    }
     @keyframes pulse-glow { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
     .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
     @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -201,6 +191,7 @@
     .chat-starter-chip:hover { background: #262a35; color: #e0fdff; border-color: #00f2fe; }
     .sun-arc-track { stroke-dasharray: 2 3; }
     .sun-arc-progress { transition: stroke-dashoffset 1s ease; }
+    #location-input { background: transparent; border: none; color: inherit; font: inherit; width: 100%; outline: none; }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -412,7 +403,7 @@
             </div>
           </div>
 
-          <!-- SUN & MOON -->
+          <!-- SUN & MOON (moved here, above maps) -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -600,14 +591,14 @@
             </div>
           </div>
 
-          <!-- AQI PANEL in Wind tab -->
+          <!-- NEW: AQI PANEL in Wind tab -->
           <div class="relative rounded-2xl bg-surface-container-low/80 backdrop-blur-xl overflow-hidden shadow-xl p-4">
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">masks</span>
                 <h3 class="font-headline-sm text-on-surface" data-i18n="aqi">AQI</h3>
               </div>
-              <span id="wind-aqi-cat" class="px-2.5 py-1 rounded-full font-label-data-sm font-semibold" style="background:#67f4b7; color:#00373a">—</span>
+              <span id="wind-aqi-cat" class="px-2.5 py-1 rounded-full text-label-data-sm font-semibold" style="background:#67f4b7; color:#00373a">—</span>
             </div>
             <div class="flex items-end justify-between mb-3 gap-2">
               <div class="flex items-baseline gap-2">
@@ -937,7 +928,7 @@
         </button>
       </div>
       <div class="relative">
-        <input id="loc-input" type="text" class="w-full rounded-xl bg-surface-container-high text-on-surface px-4 py-3 pr-11 font-body-md focus:outline-none focus:ring-2 focus:ring-primary-container/50" placeholder="Type a city…" data-i18n-placeholder="search_city">
+        <input id="loc-input" type="text" class="w-full rounded-xl bg-surface-container-high text-on-surface px-4 py-3 pr-11 font-body-md focus:outline-none focus:ring-2 focus:ring-primary-container/50" placeholder="Type a city…">
         <button id="loc-search" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
           <span class="material-symbols-outlined text-[18px]">search</span>
         </button>
@@ -1047,10 +1038,6 @@
         updated_at: 'Updated', detecting: 'Detecting…', location_error: 'Location Error',
         loading_toast: 'Loading', updated_toast: 'Updated', error_toast: 'Error',
         could_not_fetch: 'Could not fetch data.',
-        using_default_location: 'Using default location',
-        offline_toast: 'Offline',
-        cached_data_prefix: 'Cached data (',
-        cached_data_suffix: ' min old)',
         health_active: 'Health Profile Active', edit: 'Edit',
         aqi: 'AQI', uv: 'UV', feels_like: 'Feels like', humidity: 'Humidity',
         ai_brief_title: 'Mausam AI Brief', ai_brief_subtitle: 'Personalized to your profile',
@@ -1063,7 +1050,7 @@
         aqi_good: 'Good', aqi_satisfactory: 'Satisfactory', aqi_moderate: 'Moderate',
         aqi_poor: 'Poor', aqi_vpoor: 'Very Poor', aqi_severe: 'Severe',
         extended_outlook: 'Extended Outlook', thermal_arc: 'Thermal Arc',
-        daily_telemetry: 'Daily Telemetry', tap_inspect: 'Tap to inspect', today: 'Today', now: 'Now',
+        daily_telemetry: 'Daily Telemetry', tap_inspect: 'Tap to inspect', today: 'Today',
         wind_title: 'Wind & Dynamic Flow', wind_vector: 'Wind vector at 10m',
         wind_streamline_feed: 'Live Wind Streamline Feed',
         streamlines: 'Streamline Field (24h)', flow_vectors: 'Flow vectors',
@@ -1126,8 +1113,7 @@
         moonrise: 'Moonrise', moonset: 'Moonset', day_length: 'Day length',
         aqi_24h_trend: '24h trend',
         aqi_trend_rising: 'Rising', aqi_trend_falling: 'Falling', aqi_trend_steady: 'Steady',
-        set_location: 'Set Location', use_gps: 'Use current GPS location',
-        search_city: 'Type a city…', no_matches: 'No matches'
+        set_location: 'Set Location', use_gps: 'Use current GPS location'
       },
       hi: {
         nav_today: 'आज', nav_7day: '7-दिन', nav_wind: 'हवा', nav_lightning: 'बिजली', nav_cyclone: 'चक्रवात',
@@ -1136,10 +1122,6 @@
         updated_at: 'अपडेट', detecting: 'पता लगा रहे हैं…', location_error: 'स्थान त्रुटि',
         loading_toast: 'लोड हो रहा', updated_toast: 'अपडेट किया', error_toast: 'त्रुटि',
         could_not_fetch: 'डेटा नहीं मिल सका।',
-        using_default_location: 'डिफ़ॉल्ट स्थान उपयोग में',
-        offline_toast: 'ऑफ़लाइन',
-        cached_data_prefix: 'कैश डेटा (',
-        cached_data_suffix: ' मिन पुराना)',
         health_active: 'स्वास्थ्य प्रोफ़ाइल सक्रिय', edit: 'बदलें',
         aqi: 'वायु गुणवत्ता', uv: 'यूवी', feels_like: 'महसूस', humidity: 'आर्द्रता',
         ai_brief_title: 'मौसम AI ब्रीफ', ai_brief_subtitle: 'आपकी प्रोफ़ाइल के अनुसार',
@@ -1152,7 +1134,7 @@
         aqi_good: 'अच्छा', aqi_satisfactory: 'संतोषजनक', aqi_moderate: 'मध्यम',
         aqi_poor: 'खराब', aqi_vpoor: 'बहुत खराब', aqi_severe: 'गंभीर',
         extended_outlook: 'विस्तृत पूर्वानुमान', thermal_arc: 'तापमान चाप',
-        daily_telemetry: 'दैनिक टेलीमेट्री', tap_inspect: 'विवरण के लिए टैप करें', today: 'आज', now: 'अब',
+        daily_telemetry: 'दैनिक टेलीमेट्री', tap_inspect: 'विवरण के लिए टैप करें', today: 'आज',
         wind_title: 'हवा और गतिशील प्रवाह', wind_vector: '10 मीटर पर हवा',
         wind_streamline_feed: 'लाइव हवा प्रवाह',
         streamlines: 'प्रवाह क्षेत्र (24घं)', flow_vectors: 'प्रवाह सदिश',
@@ -1215,8 +1197,7 @@
         moonrise: 'चंद्रोदय', moonset: 'चंद्रास्त', day_length: 'दिन की लंबाई',
         aqi_24h_trend: '24घं रुझान',
         aqi_trend_rising: 'बढ़ रहा', aqi_trend_falling: 'घट रहा', aqi_trend_steady: 'स्थिर',
-        set_location: 'स्थान सेट करें', use_gps: 'जीपीएस स्थान उपयोग करें',
-        search_city: 'शहर का नाम लिखें…', no_matches: 'कोई मेल नहीं'
+        set_location: 'स्थान सेट करें', use_gps: 'जीपीएस स्थान उपयोग करें'
       }
     };
 
@@ -1238,7 +1219,7 @@
     const state = {
       lat: 28.6139, lon: 77.2090,
       locationName: 'New Delhi',
-      weather: null, airQuality: null,
+      weather: null, airQuality: null, aqiHourly: null,
       radarMap: null, radarLayer: null, radarTimer: null,
       aqiMap: null, aqiLayer: null, aqiTimer: null,
       health: { age: null, conditions: [] }
@@ -1246,27 +1227,6 @@
 
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
-
-    // ============================================================
-    // OFFLINE CACHE — last good weather payload
-    // ============================================================
-    const CACHE_KEY = 'mausam_cache_v1';
-    function saveCache() {
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          t: Date.now(), weather: state.weather, aqi: state.airQuality,
-          lat: state.lat, lon: state.lon, name: state.locationName
-        }));
-      } catch (e) {}
-    }
-    function loadCache() {
-      try {
-        const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return null;
-        const c = JSON.parse(raw);
-        return (c && c.weather) ? c : null;
-      } catch (e) { return null; }
-    }
 
     // ============================================================
     // WMO MAP
@@ -1282,6 +1242,7 @@
     };
     const wInfo = (c) => WMO[c] || { k: 'w_clear', i: 'help' };
     const wDesc = (c) => t(wInfo(c).k);
+    // True if weather code indicates an active thunderstorm
     const isThunderCode = (c) => c === 95 || c === 96 || c === 99;
 
     // ============================================================
@@ -1438,7 +1399,7 @@
         const pos = await getLiveLocation();
         const name = await reverseGeocode(pos.lat, pos.lon);
         await loadAll(pos.lat, pos.lon, name);
-      } catch(e) { showToast(t('location_error'), t('using_default_location')); }
+      } catch(e) { showToast(t('location_error'), 'Using default location'); }
     });
 
     let locSearchTimer = null;
@@ -1461,7 +1422,7 @@
         const data = await res.json();
         const results = data.results || [];
         if (results.length === 0) {
-          $('#loc-results').innerHTML = `<p class="font-body-sm text-on-surface-variant p-3">${t('no_matches')}</p>`;
+          $('#loc-results').innerHTML = `<p class="font-body-sm text-on-surface-variant p-3">No matches</p>`;
           return;
         }
         $('#loc-results').innerHTML = results.map(r => `
@@ -1483,7 +1444,7 @@
     }
 
     // ============================================================
-    // GEOLOCATION + REVERSE GEOCODING
+    // GEOLOCATION + REVERSE GEOCODING (BigDataCloud for suburb accuracy)
     // ============================================================
     function getLiveLocation() {
       return new Promise((resolve, reject) => {
@@ -1497,12 +1458,15 @@
     }
 
     async function reverseGeocode(lat, lon) {
+      // BigDataCloud's free client-side endpoint — no API key required, returns suburb-level data
       try {
         const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
         if (res.ok) {
           const d = await res.json();
+          // Prefer the most specific name available
           const name = d.locality || d.city || d.principalSubdivision || d.countryName;
           if (name) {
+            // If locality and city are different, show "Locality, City"
             if (d.locality && d.city && d.locality !== d.city) {
               return `${d.locality}, ${d.city}`;
             }
@@ -1510,6 +1474,8 @@
           }
         }
       } catch (e) { console.warn('BigDataCloud failed, falling back', e); }
+
+      // Fallback to Nominatim if BDC fails
       try {
         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12`, {
           headers: { 'User-Agent': 'MausamWeatherApp/1.0' }
@@ -1660,7 +1626,7 @@
     }
 
     // ============================================================
-    // AQI MAP
+    // AQI MAP — now with heatmap-style blended blobs
     // ============================================================
     function cpcbColor(aqi) {
       if (aqi == null)     return { color: '#849495', label: '—' };
@@ -1721,6 +1687,7 @@
     async function refreshAqiOverlay(lat, lon) {
       if (!state.aqiMap || !state.aqiLayer) return;
       try {
+        // Use a wider, denser grid to make blobs blend naturally
         const step = 0.7;
         const grid = [];
         for (let dy = -3; dy <= 3; dy++)
@@ -1746,6 +1713,8 @@
           points.push({ lat: grid[idx][0], lon: grid[idx][1], aqi });
         });
 
+        // Heatmap-style: draw each point as a semi-transparent soft circle.
+        // Overlapping circles blend to create a continuous-looking field.
         const radiusMeters = 55000;
         points.forEach(p => {
           const [r, g, b] = cpcbColorRGB(p.aqi);
@@ -1760,6 +1729,7 @@
           }).addTo(state.aqiLayer);
         });
 
+        // Personal warning rings for AQI above user threshold
         points.forEach(p => {
           if (p.aqi >= thresholds.aqiWarn) {
             const [r, g, b] = cpcbColorRGB(p.aqi);
@@ -1828,15 +1798,18 @@
       $('#wind-aqi-cat').style.background = cat.color;
       $('#wind-aqi-cat').style.color = (a.v <= 100) ? '#00373a' : '#ffffff';
 
+      // Compute 24h trend from hourly pm2_5
       if (aqi.hourly && aqi.hourly.time && aqi.hourly.pm2_5) {
         const times = aqi.hourly.time;
         const pm25 = aqi.hourly.pm2_5;
         const now = new Date();
+        // Find index of current hour
         let currentIdx = 0;
         for (let i = 0; i < times.length; i++) {
           if (new Date(times[i]) <= now) currentIdx = i;
           else break;
         }
+        // Take next 24 hours from current
         const series = [];
         for (let i = currentIdx; i < Math.min(currentIdx + 24, pm25.length); i++) {
           const val = pm25[i];
@@ -1884,9 +1857,9 @@
             <stop offset="100%" stop-color="rgb(${r},${g},${b})" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        <path d="${areaD}" fill="url(#aqiSparkGrad)" vector-effect="non-scaling-stroke"/>
-        <path d="${pathD}" fill="none" stroke="rgb(${r},${g},${b})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-        <circle cx="${points[points.length-1][0].toFixed(1)}" cy="${points[points.length-1][1].toFixed(1)}" r="3" fill="rgb(${r},${g},${b})" vector-effect="non-scaling-stroke"/>
+        <path d="${areaD}" fill="url(#aqiSparkGrad)"/>
+        <path d="${pathD}" fill="none" stroke="rgb(${r},${g},${b})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${points[points.length-1][0].toFixed(1)}" cy="${points[points.length-1][1].toFixed(1)}" r="3" fill="rgb(${r},${g},${b})"/>
       `;
     }
 
@@ -2003,7 +1976,7 @@
     }
 
     // ============================================================
-    // RENDER: TODAY (no longer initializes maps; that's done in loadAll)
+    // RENDER: TODAY
     // ============================================================
     function renderToday(w, aqi) {
       const c = w.current, d = w.daily;
@@ -2037,6 +2010,8 @@
       renderAIBrief(w, aqi);
       renderHourly(w);
       renderWindAqiPanel(aqi);
+      initRadar(state.lat, state.lon);
+      initAqiMap(state.lat, state.lon);
     }
 
     function renderAIBrief(w, aqi) {
@@ -2144,7 +2119,7 @@
         const info = wInfo(h.weather_code[i]);
         const temp = Math.round(h.temperature_2m[i]);
         const rp = h.precipitation_probability[i] || 0;
-        const label = isNow ? t('now') : `${String(hr).padStart(2,'0')}:00`;
+        const label = isNow ? t('today') : `${String(hr).padStart(2,'0')}:00`;
         html += `
           <div class="flex flex-col items-center justify-between min-w-[68px] p-2.5 rounded-xl ${isNow?'bg-surface-container/90':'bg-surface-container-low/70'} shrink-0">
             <span class="font-label-data-sm ${isNow?'text-primary-fixed font-semibold':'text-on-surface-variant'}">${label}</span>
@@ -2271,6 +2246,7 @@
       const bNamesEn = ['Calm','Light Air','Light Breeze','Gentle Breeze','Moderate','Fresh','Strong','Near Gale','Gale','Strong Gale','Storm','Violent','Hurricane'];
       const bNamesHi = ['शांत','हल्की हवा','हल्की बयार','सौम्य बयार','मध्यम','तेज़','प्रबल','लगभग आंधी','आंधी','तेज़ आंधी','तूफ़ान','हिंसक','चक्रवात'];
       const bNames = currentLang === 'hi' ? bNamesHi : bNamesEn;
+      // Clearer Beaufort label: "Beaufort 2 (Light Breeze)"
       $('#beaufort').textContent = `${t('beaufort')} ${bf} (${bNames[bf]})`;
       $('#wind-chill').textContent = `${t('wind_chill_label')}: ${Math.round(c.apparent_temperature)}°`;
       const svg = $('#flow-lines');
@@ -2286,11 +2262,12 @@
     }
 
     // ============================================================
-    // RENDER: LIGHTNING
+    // RENDER: LIGHTNING — with stricter thresholds and clear-sky guard
     // ============================================================
     function renderLightning(w) {
       const h = w.hourly;
       let maxCape = 0, minLI = 99, thunderProb = 0;
+      // Track whether ANY upcoming hour (next 12) has an active thunder code
       let upcomingThunder = false;
       const next12 = Math.min(12, h.time.length);
       for (let i = 0; i < Math.min(24, h.time.length); i++) {
@@ -2310,6 +2287,7 @@
       $('#thunder-prob').textContent = Math.round(thunderProb);
       $('#strike-rate').textContent = upcomingThunder ? Math.round(maxCape / 50) : 0;
 
+      // Stricter threat thresholds (moderate level per user request)
       let threat, threatClass = 'bg-secondary-container/85';
       if (maxCape > 3500) { threat = currentLang === 'hi' ? 'गंभीर' : 'Severe'; threatClass = 'bg-error-container/85'; }
       else if (maxCape > 2200) { threat = currentLang === 'hi' ? 'उच्च' : 'High'; threatClass = 'bg-error-container/60'; }
@@ -2317,6 +2295,7 @@
       else if (maxCape > 500) { threat = currentLang === 'hi' ? 'सीमांत' : 'Marginal'; }
       else { threat = currentLang === 'hi' ? 'कम' : 'Low'; }
 
+      // If no storms are actually forming, cap the display threat
       if (!upcomingThunder && maxCape < 2200) {
         threat = currentLang === 'hi' ? 'कम' : 'Low';
         threatClass = 'bg-secondary-container/85';
@@ -2328,6 +2307,7 @@
 
       const layer = $('#strike-layer');
       let markers = '';
+      // Only draw strike markers if there's an actual thunderstorm in the forecast
       if (upcomingThunder) {
         const numStrikes = Math.min(20, Math.floor(maxCape / 200));
         for (let i = 0; i < numStrikes; i++) {
@@ -2344,12 +2324,14 @@
       const li = minLI < 99 ? minLI.toFixed(1) : 'N/A';
       let brief = '';
       if (!upcomingThunder) {
+        // No storms actually forecast — don't scare the user
         if (currentLang === 'hi') {
           brief = `कोई तूफ़ान पूर्वानुमान में नहीं। वायुमंडलीय अस्थिरता ${Math.round(maxCape)} J/kg — निगरानी जारी, पर अभी कोई तूफ़ान नहीं बन रहा।`;
         } else {
           brief = `No thunderstorms currently forecast. Atmospheric instability is ${Math.round(maxCape)} J/kg — worth watching, but no storms are forming right now.`;
         }
       } else {
+        // Storms are actually forecast
         if (currentLang === 'hi') {
           if (maxCape > 2200) brief = `तेज़ तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg). सावधानी बरतें।`;
           else if (maxCape > 1200) brief = `तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg).`;
@@ -2413,7 +2395,7 @@
     $$('.nav-link').forEach(l => l.addEventListener('click', () => switchView(l.dataset.view)));
 
     // ============================================================
-    // MAIN LOADER (map init moved here so language toggle doesn't re-trigger it)
+    // MAIN LOADER
     // ============================================================
     async function loadAll(lat, lon, name) {
       state.lat = lat; state.lon = lon;
@@ -2428,28 +2410,10 @@
         renderWind(w);
         renderLightning(w);
         renderCyclone(lat, lon);
-        initRadar(lat, lon);
-        initAqiMap(lat, lon);
-        saveCache();
         showToast(t('updated_toast'), state.locationName);
       } catch (e) {
         console.error(e);
-        const cached = loadCache();
-        if (cached) {
-          state.weather = cached.weather;
-          state.airQuality = cached.aqi;
-          renderToday(cached.weather, cached.aqi);
-          render7Day(cached.weather);
-          renderWind(cached.weather);
-          renderLightning(cached.weather);
-          renderCyclone(state.lat, state.lon);
-          initRadar(state.lat, state.lon);
-          initAqiMap(state.lat, state.lon);
-          const mins = Math.round((Date.now() - cached.t) / 60000);
-          showToast(t('offline_toast'), t('cached_data_prefix') + mins + t('cached_data_suffix'));
-        } else {
-          showToast(t('error_toast'), t('could_not_fetch'));
-        }
+        showToast(t('error_toast'), t('could_not_fetch'));
       }
     }
 
@@ -2616,10 +2580,10 @@
     });
     window.addEventListener('pointermove', (e) => {
       if (!panelDragging) return;
-      const dy = e.client windowY - panelDragStartY;
-      if (dy > 0) chat.addEventListenerPanel.style.transform =(' `translateY(${dy}px)`;
-   pointer });
-   up', (e) => {
+      const dy = e.clientY - panelDragStartY;
+      if (dy > 0) chatPanel.style.transform = `translateY(${dy}px)`;
+    });
+    window.addEventListener('pointerup', (e) => {
       if (!panelDragging) return;
       panelDragging = false;
       chatPanel.style.transition = '';
@@ -2737,61 +2701,6 @@
       }
     });
     chatSendBtn.addEventListener('click', sendChatMessage);
-
-    // ============================================================
-    // LOCAL CHAT FALLBACK
-    // ============================================================
-    function localWeatherReply(text) {
-      const w = state.weather;
-      if (!w) return null;
-      const c = w.current, d = w.daily, h = w.hourly;
-      const hi = currentLang === 'hi';
-      const rain = d.precipitation_probability_max[0] || 0;
-      const feels = Math.round(c.apparent_temperature);
-      const aqiVal = state.airQuality?.current ? calcAQI(state.airQuality.current.pm2_5).v : null;
-      const q = text.toLowerCase();
-      const has = (...pats) => pats.some(p => q.includes(p));
-
-      const bestWalk = () => {
-        let best = 0, bestScore = Infinity;
-        for (let i = 0; i < 24 && i < h.time.length; i++) {
-          const pp = h.precipitation_probability[i] || 0;
-          const score = pp * 2 + Math.abs(h.temperature_2m[i] - 22);
-          if (score < bestScore) { bestScore = score; best = i; }
-        }
-        const bt = new Date(h.time[best]);
-        return { hr: bt.getHours(), pp: h.precipitation_probability[best] || 0, temp: Math.round(h.temperature_2m[best]) };
-      };
-
-      if (has('rain', 'baarish', 'बारिश', 'shower', 'barish'))
-        return hi ? `आज बारिश की संभावना ${rain}% है। ${rain > 60 ? 'छाता ज़रूर ले जाएं।' : rain > 30 ? 'हल्की बौछारें संभव हैं।' : 'बारिश की उम्मीद कम है।'}`
-                    : `Rain chance today is ${rain}%. ${rain > 60 ? 'Definitely carry an umbrella.' : rain > 30 ? 'A few showers are possible.' : 'Rain is unlikely.'}`;
-      if (has('umbrella', 'छाता'))
-        return rain > 60 ? (hi ? 'हां, छाता ले जाना बेहतर रहेगा।' : 'Yes, better take an umbrella.')
-             : rain > 30 ? (hi ? 'हल्की बौछारें संभव हैं — छोटा छाता रख लें।' : 'Showers are possible — a compact umbrella is a safe bet.')
-             : (hi ? 'शायद ही ज़रूरत पड़े, लेकिन हल्का वाटरप्रूफ जैकेट ठीक रहेगा।' : 'Probably not needed, but a light waterproof layer is a safe bet.');
-      if (has('walk', 'run', 'exercise', 'chal', 'टहल', 'ghum'))
-        { const b = bestWalk();
-          return hi ? `टहलने का अच्छा समय: लगभग ${b.hr}:00 — बारिश ${b.pp}%, तापमान ${b.temp}°C।`
-                    : `Best time for a walk: around ${b.hr}:00 — rain chance ${b.pp}%, ${b.temp}°C.`; }
-      if (has('air', 'aqi', 'hawa', 'हवा', 'saans', 'सांस'))
-        return aqiVal !== null
-          ? (hi ? `वायु गुणवत्ता सूचकांक ${aqiVal} है — ${aqiVal <= 100 ? 'सामान्य सक्रियता ठीक है।' : 'बाहर कम रहना बेहतर।'}${state.health.conditions.includes('asthma') ? ' आपकी श्वसन संवेदनशीलता के लिए मास्क उपयोगी है।' : ''}`
-                : `AQI is ${aqiVal} — ${aqiVal <= 100 ? 'normal outdoor activity is fine.' : 'limit prolonged outdoor exertion.'}${state.health.conditions.includes('asthma') ? ' Given your respiratory sensitivity, a mask helps.' : ''}`)
-          : (hi ? 'वायु गुणवत्ता डेटा उपलब्ध नहीं है।' : 'Air quality data is unavailable right now.');
-      if (has('hot', 'heat', 'garmi', 'गर्म', 'temper'))
-        return hi ? `अभी ${Math.round(c.temperature_2m)}°C, महसूस ${feels}°C। आज अधिकतम ${Math.round(d.temperature_2m_max[0])}° रहेगा।${feels >= 35 ? ' पानी पीते रहें।' : ''}`
-                  : `It's ${Math.round(c.temperature_2m)}°C now, feels like ${feels}°C. Today's high: ${Math.round(d.temperature_2m_max[0])}°.${feels >= 35 ? ' Stay hydrated.' : ''}`;
-      if (has('wind', 'storm', 'तूफ़ान', 'hawa'))
-        return hi ? `हवा ${Math.round(c.wind_speed_10m)} किमी/घं, झोंके ${Math.round(c.wind_gusts_10m)} तक।`
-                  : `Winds are ${Math.round(c.wind_speed_10m)} km/h with gusts up to ${Math.round(c.wind_gusts_10m)} km/h.`;
-      if (has('thunder', 'bijli', 'बिजली', 'lightning'))
-        return hi ? 'बिजली टैब में लाइव केप और तूफ़ान संभावना देखें।'
-                  : 'Check the Lightning tab for live CAPE and thunderstorm probability.';
-      return hi ? `अभी ${state.locationName} में ${Math.round(c.temperature_2m)}°C, ${wDesc(c.weather_code)}। आज ${Math.round(d.temperature_2m_min[0])}°–${Math.round(d.temperature_2m_max[0])}°, बारिश ${rain}%.`
-                : `Currently ${Math.round(c.temperature_2m)}°C and ${wDesc(c.weather_code)} in ${state.locationName}. Today: ${Math.round(d.temperature_2m_min[0])}°–${Math.round(d.temperature_2m_max[0])}°, rain chance ${rain}%.`;
-    }
-
     async function sendChatMessage() {
       if (isSending) return;
       const text = chatInput.value.trim();
@@ -2817,13 +2726,8 @@
         const data = await res.json();
         hideTypingIndicator();
         if (!res.ok || !data.choices || !data.choices[0]) {
-          const fallback = localWeatherReply(text);
-          if (fallback) {
-            chatHistory.push({ role: 'assistant', content: fallback });
-          } else {
-            const errMsg = data?.error?.message || data?.error || (currentLang === 'hi' ? 'AI से संपर्क नहीं हो सका।' : 'Could not reach AI.');
-            chatHistory.push({ role: 'error', content: typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg) });
-          }
+          const errMsg = data?.error?.message || data?.error || (currentLang === 'hi' ? 'AI से संपर्क नहीं हो सका।' : 'Could not reach AI.');
+          chatHistory.push({ role: 'error', content: typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg) });
           saveChatHistory(); renderChatMessages(); scrollChatToBottom(); return;
         }
         const reply = data.choices[0].message?.content?.trim() || '(empty reply)';
@@ -2833,10 +2737,7 @@
         scrollChatToBottom();
       } catch (err) {
         hideTypingIndicator();
-        const fallback = localWeatherReply(text);
-        chatHistory.push(fallback
-          ? { role: 'assistant', content: fallback }
-          : { role: 'error', content: currentLang === 'hi' ? 'नेटवर्क त्रुटि।' : 'Network error.' });
+        chatHistory.push({ role: 'error', content: currentLang === 'hi' ? 'नेटवर्क त्रुटि।' : 'Network error.' });
         saveChatHistory(); renderChatMessages(); scrollChatToBottom();
       } finally {
         isSending = false;
@@ -2861,14 +2762,12 @@
     applyLanguage();
 
     (async function init() {
-      const cached = loadCache();
       try {
         const pos = await getLiveLocation();
         const name = await reverseGeocode(pos.lat, pos.lon);
         await loadAll(pos.lat, pos.lon, name);
       } catch(e) {
-        if (cached) await loadAll(cached.lat, cached.lon, cached.name || 'Last known');
-        else await loadAll(28.6139, 77.2090, 'New Delhi');
+        await loadAll(28.6139, 77.2090, 'New Delhi');
       }
     })();
 
