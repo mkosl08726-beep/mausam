@@ -3,6 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <meta name="description" content="Mausam — hyperlocal weather intelligence for India: live precipitation radar, AQI maps, lightning diagnostics, cyclone tracking, health-aware alerts and an AI brief.">
+  <meta name="theme-color" content="#0f131d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f131d%22/%3E%3Cpath%20d%3D%22M20%2040a10%2010%200%201%201%204-19%2013%2013%200%200%201%2025%206%208%208%200%200%201-6%2013z%22%20fill%3D%22%2300f2fe%22/%3E%3Cpath%20d%3D%22M26%2046l-3%208M36%2046l-3%208%22%20stroke%3D%22%23d0bcff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22/%3E%3C/svg%3E">
   <title>Mausam — Hyperlocal Weather Intelligence</title>
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -51,7 +57,7 @@
             "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
             "label-data-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.05em", fontWeight: "600" }],
             "headline-lg-mobile": ["26px", { lineHeight: "32px", fontWeight: "600" }],
-            "display-hero-mobile": ["44px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "300" }]
+            "display-hero-mobile": ["44px", { lineHeight: "48px", fontWeight: "300" }]
           }
         }
       }
@@ -60,51 +66,18 @@
   <style>
     @layer base {
       html, body { width: 100vw; margin: 0; padding: 0; background-color: #0f131d; }
-      body { overscroll-behavior: none; font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; color: #dfe2f1; transition: background-color 0.25s ease, color 0.25s ease; }
+      body { overscroll-behavior: none; font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; color: #dfe2f1; }
       .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
       .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
-      /* Light theme overrides */
-      html.light body { background-color: #f0f4f8; color: #1a2230; }
-      html.light .bg-surface { background-color: #f0f4f8 !important; }
-      html.light .bg-surface-container-lowest { background-color: #e8edf3 !important; }
-      html.light .bg-surface-container-low { background-color: #f5f8fb !important; }
-      html.light .bg-surface-container { background-color: #e4e9ef !important; }
-      html.light .bg-surface-container-high { background-color: #d6dce4 !important; }
-      html.light .bg-surface-container-highest { background-color: #cbd2db !important; }
-      html.light .bg-surface-bright { background-color: #eef2f7 !important; }
-      html.light .text-on-surface { color: #1a2230 !important; }
-      html.light .text-on-surface-variant { color: #4a5665 !important; }
-      html.light .text-outline { color: #5a6878 !important; }
-      html.light .text-primary { color: #00595e !important; }
-      html.light .text-primary-fixed { color: #00595e !important; }
-      html.light .text-primary-fixed-dim { color: #006a70 !important; }
-      html.light .text-surface-tint { color: #006a70 !important; }
-      html.light .text-tertiary-fixed { color: #006e4b !important; }
-      html.light .text-secondary-fixed { color: #4a1e9e !important; }
-      html.light .text-secondary { color: #571bc1 !important; }
-      html.light .bg-primary-container { background-color: #00c6d3 !important; }
-      html.light .bg-secondary-container { background-color: #b8a4f0 !important; }
-      html.light .bg-tertiary-container { background-color: #4ec99c !important; }
-      html.light .border-surface-variant { border-color: #c5ccd6 !important; }
-      html.light .border-outline { border-color: #a8b2bf !important; }
-      html.light .border-outline-variant { border-color: #c5ccd6 !important; }
-      html.light .bg-outline { background-color: #a8b2bf !important; }
-      html.light .shadow-2xl, html.light .shadow-xl, html.light .shadow-lg { box-shadow: 0 4px 20px rgba(0, 40, 80, 0.08) !important; }
-      html.light .leaflet-tile-pane { filter: none !important; }
-      html.light .leaflet-container { background: #e8edf3 !important; }
-      html.light #chat-panel { background: #f5f8fb; }
-      html.light .chat-bubble-user { background: #d6dce4; color: #1a2230; }
-      html.light .chat-bubble-ai { background: #ffffff; color: #1a2230; }
-      html.light .chat-bubble-error { background: #ffe6e6; color: #8b0033; }
-      html.light .chat-starter-chip { background: #eef2f7; color: #4a5665; border-color: #c5ccd6; }
-      html.light #chat-input { color: #1a2230; }
-      html.light #chat-input::placeholder { color: #7a8899; }
-      html.light .health-check { background: #ffffff; border-color: #a8b2bf; }
     }
     ::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     body { min-height: max(884px, 100dvh); }
+    @media (prefers-reduced-motion: reduce) {
+      .animate-pulse-glow, .animate-spin-slow, .strike-pulse, .flow-line, #chat-bubble.pulse { animation: none !important; }
+      .sheet, #chat-panel, #chat-bubble { transition: none !important; }
+    }
     @keyframes pulse-glow { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
     .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
     @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -226,7 +199,6 @@
       transition: all 0.15s;
     }
     .chat-starter-chip:hover { background: #262a35; color: #e0fdff; border-color: #00f2fe; }
-    /* Sun position arc */
     .sun-arc-track { stroke-dasharray: 2 3; }
     .sun-arc-progress { transition: stroke-dashoffset 1s ease; }
   </style>
@@ -239,15 +211,12 @@
   <header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
     <div class="h-16 px-margin flex items-center justify-between gap-space-sm">
       <div class="flex items-center gap-space-sm min-w-0 flex-1">
-        <button id="location-btn" class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container/70 backdrop-blur-md min-h-[44px] max-w-[160px] text-left hover:bg-surface-container-high transition-colors">
+        <button id="location-btn" class="flex items-center gap-space-xs px-space-md py-1.5 rounded-full bg-surface-container/70 backdrop-blur-md min-h-[44px] max-w-[180px] text-left hover:bg-surface-container-high transition-colors">
           <span class="material-symbols-outlined text-primary-fixed text-[16px]">near_me</span>
           <span id="location-label" class="font-label-data-md text-on-surface truncate">Detecting…</span>
         </button>
       </div>
       <div class="flex items-center gap-space-xs shrink-0">
-        <button id="theme-toggle" class="flex items-center justify-center w-11 h-11 rounded-full bg-surface-container/60 hover:bg-surface-container-high transition-colors" aria-label="Toggle theme">
-          <span id="theme-icon" class="material-symbols-outlined text-[18px] text-primary-fixed">dark_mode</span>
-        </button>
         <button id="lang-toggle" class="flex items-center justify-center min-w-[44px] h-11 px-3 rounded-full bg-surface-container/60 hover:bg-surface-container-high transition-colors font-label-data-md font-semibold text-primary-fixed" aria-label="Toggle language">हि</button>
         <button id="health-btn" class="relative flex items-center justify-center w-11 h-11 rounded-full bg-surface-container/60 hover:bg-surface-container-high transition-colors">
           <span class="material-symbols-outlined text-[20px] text-on-surface-variant">health_and_safety</span>
@@ -357,66 +326,6 @@
             </div>
           </div>
 
-          <!-- SUN & MOON -->
-          <div class="space-y-space-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-fixed text-[18px]">light_mode</span>
-                <h3 class="font-headline-sm text-on-surface" data-i18n="sun_moon_title">Sun & Moon</h3>
-              </div>
-              <span id="day-length" class="font-label-data-sm text-on-surface-variant">—</span>
-            </div>
-            <div class="rounded-xl bg-surface-container-low/80 backdrop-blur-xl p-3 shadow-lg">
-              <!-- Sun arc -->
-              <div class="relative w-full h-24 mb-1">
-                <svg class="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
-                  <!-- Arc track -->
-                  <path d="M 20 85 Q 150 -10 280 85" fill="none" stroke="#849495" stroke-width="1.5" class="sun-arc-track" opacity="0.4"/>
-                  <!-- Progress arc (filled by JS) -->
-                  <path id="sun-progress-arc" d="M 20 85 Q 150 -10 280 85" fill="none" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round" class="sun-arc-progress"/>
-                  <!-- Horizon line -->
-                  <line x1="10" y1="85" x2="290" y2="85" stroke="#849495" stroke-width="0.5" opacity="0.4"/>
-                  <!-- Sun icon (positioned by JS) -->
-                  <circle id="sun-dot" cx="150" cy="20" r="6" fill="#fbbf24" filter="drop-shadow(0 0 6px #fbbf24)"/>
-                </svg>
-              </div>
-              <!-- Sun times -->
-              <div class="grid grid-cols-2 gap-2">
-                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-surface-tint">wb_twilight</span>
-                  <div class="min-w-0">
-                    <p class="font-label-data-sm text-outline uppercase" data-i18n="sunrise">Sunrise</p>
-                    <p id="sunrise-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
-                  </div>
-                </div>
-                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-secondary">bedtime</span>
-                  <div class="min-w-0">
-                    <p class="font-label-data-sm text-outline uppercase" data-i18n="sunset">Sunset</p>
-                    <p id="sunset-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
-                  </div>
-                </div>
-              </div>
-              <!-- Moon times -->
-              <div class="grid grid-cols-2 gap-2 mt-2">
-                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-secondary-fixed">dark_mode</span>
-                  <div class="min-w-0">
-                    <p class="font-label-data-sm text-outline uppercase" data-i18n="moonrise">Moonrise</p>
-                    <p id="moonrise-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
-                  </div>
-                </div>
-                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-outline">nightlight</span>
-                  <div class="min-w-0">
-                    <p class="font-label-data-sm text-outline uppercase" data-i18n="moonset">Moonset</p>
-                    <p id="moonset-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- AI BRIEF -->
           <div class="relative overflow-hidden rounded-xl bg-surface-container/70 backdrop-blur-2xl p-space-md shadow-xl">
             <div class="flex items-center justify-between gap-2 pb-2.5">
@@ -452,7 +361,7 @@
             <div id="hourly-scroll" class="flex items-stretch gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-1"></div>
           </div>
 
-          <!-- TELEMETRY GRID — now with AQI in place of visibility -->
+          <!-- TELEMETRY GRID -->
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <h3 class="font-headline-sm text-on-surface" data-i18n="telemetry_title">Multi-Sensor Telemetry</h3>
@@ -477,13 +386,12 @@
                   <span class="font-label-data-sm uppercase tracking-wider" data-i18n="wind_gust">Wind / Gust</span>
                   <span class="material-symbols-outlined text-[18px] text-primary-fixed">explore</span>
                 </div>
-                <div class="flex items-baseline gap-1">
+                <div class="flex items-baseline gap-1 flex-wrap">
                   <span id="wind-value" class="font-headline-lg-mobile font-semibold text-on-surface">--</span>
-                  <span id="gust-value" class="font-headline-sm text-primary-fixed">G--</span>
                   <span class="font-label-data-md text-on-surface-variant">km/h</span>
+                  <span id="gust-value" class="font-label-data-sm text-primary-fixed">—</span>
                 </div>
               </div>
-              <!-- AQI card -->
               <div class="rounded-xl bg-surface-container-low/70 backdrop-blur-md p-space-md">
                 <div class="flex items-center justify-between text-outline mb-2">
                   <span class="font-label-data-sm uppercase tracking-wider" data-i18n="aqi">AQI</span>
@@ -500,6 +408,59 @@
                   <span class="material-symbols-outlined text-[18px] text-surface-tint">humidity_percentage</span>
                 </div>
                 <span id="humidity-grid" class="font-headline-lg-mobile font-semibold text-on-surface">--%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUN & MOON -->
+          <div class="space-y-space-xs">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary-fixed text-[18px]">light_mode</span>
+                <h3 class="font-headline-sm text-on-surface" data-i18n="sun_moon_title">Sun & Moon</h3>
+              </div>
+              <span id="day-length" class="font-label-data-sm text-on-surface-variant">—</span>
+            </div>
+            <div class="rounded-xl bg-surface-container-low/80 backdrop-blur-xl p-3 shadow-lg">
+              <div class="relative w-full h-24 mb-1">
+                <svg class="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="xMidYMid meet">
+                  <path d="M 20 85 Q 150 -10 280 85" fill="none" stroke="#849495" stroke-width="1.5" class="sun-arc-track" opacity="0.4"/>
+                  <path id="sun-progress-arc" d="M 20 85 Q 150 -10 280 85" fill="none" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round" class="sun-arc-progress"/>
+                  <line x1="10" y1="85" x2="290" y2="85" stroke="#849495" stroke-width="0.5" opacity="0.4"/>
+                  <circle id="sun-dot" cx="150" cy="20" r="6" fill="#fbbf24" filter="drop-shadow(0 0 6px #fbbf24)"/>
+                </svg>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-surface-tint">wb_twilight</span>
+                  <div class="min-w-0">
+                    <p class="font-label-data-sm text-outline uppercase" data-i18n="sunrise">Sunrise</p>
+                    <p id="sunrise-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
+                  </div>
+                </div>
+                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-secondary">bedtime</span>
+                  <div class="min-w-0">
+                    <p class="font-label-data-sm text-outline uppercase" data-i18n="sunset">Sunset</p>
+                    <p id="sunset-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-secondary-fixed">dark_mode</span>
+                  <div class="min-w-0">
+                    <p class="font-label-data-sm text-outline uppercase" data-i18n="moonrise">Moonrise</p>
+                    <p id="moonrise-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
+                  </div>
+                </div>
+                <div class="rounded-lg bg-surface-container/60 p-2.5 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-outline">nightlight</span>
+                  <div class="min-w-0">
+                    <p class="font-label-data-sm text-outline uppercase" data-i18n="moonset">Moonset</p>
+                    <p id="moonset-time" class="font-label-data-md text-on-surface font-semibold truncate">—</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -570,7 +531,6 @@
             <h1 class="font-headline-lg-mobile text-primary font-semibold" data-i18n="extended_outlook">Extended Outlook</h1>
             <p class="font-label-data-sm text-on-surface-variant uppercase tracking-wider">7-Day Forecast • Open-Meteo</p>
           </div>
-
           <div class="rounded-xl bg-surface-container-low/75 backdrop-blur-xl p-space-md shadow-lg">
             <div class="flex items-center justify-between mb-space-sm">
               <h3 class="font-headline-sm text-primary" data-i18n="thermal_arc">Thermal Arc</h3>
@@ -578,7 +538,6 @@
             </div>
             <div id="weekly-chart" class="grid grid-cols-7 gap-1 pt-3 pb-1 items-end select-none"></div>
           </div>
-
           <div class="space-y-space-xs">
             <div class="flex items-center justify-between">
               <h3 class="font-headline-sm text-primary" data-i18n="daily_telemetry">Daily Telemetry</h3>
@@ -605,7 +564,6 @@
               <span class="font-label-data-sm text-on-surface" data-i18n="wind_vector">Wind vector at 10m</span>
               <span id="wind-compass-label" class="font-label-data-sm text-primary-fixed">—</span>
             </div>
-
             <div class="relative w-full flex items-center justify-center my-space-sm">
               <div class="relative w-56 h-56 rounded-full flex items-center justify-center bg-surface-container-low/50 backdrop-blur-md">
                 <span class="absolute top-2 font-label-data-sm text-primary font-bold">N</span>
@@ -633,14 +591,38 @@
                 </div>
               </div>
             </div>
-
             <div class="flex items-center justify-between pt-space-xs bg-surface-container/40 rounded-xl p-space-sm mt-3">
               <div class="px-space-sm py-1 rounded-full bg-primary-container/15 text-primary-fixed flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">speed</span>
-                <span id="beaufort" class="font-label-data-sm font-semibold">Beaufort —</span>
+                <span id="beaufort" class="font-label-data-sm font-semibold">—</span>
               </div>
               <span id="wind-chill" class="font-label-data-md text-on-surface">Chill: —°</span>
             </div>
+          </div>
+
+          <!-- AQI PANEL in Wind tab -->
+          <div class="relative rounded-2xl bg-surface-container-low/80 backdrop-blur-xl overflow-hidden shadow-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-tertiary-fixed text-[18px]">masks</span>
+                <h3 class="font-headline-sm text-on-surface" data-i18n="aqi">AQI</h3>
+              </div>
+              <span id="wind-aqi-cat" class="px-2.5 py-1 rounded-full font-label-data-sm font-semibold" style="background:#67f4b7; color:#00373a">—</span>
+            </div>
+            <div class="flex items-end justify-between mb-3 gap-2">
+              <div class="flex items-baseline gap-2">
+                <span id="wind-aqi-value" class="text-[44px] leading-none font-light text-on-surface">--</span>
+                <span class="font-label-data-md text-on-surface-variant mb-1">CPCB</span>
+              </div>
+              <div class="text-right">
+                <span id="wind-aqi-delta" class="font-label-data-sm text-on-surface-variant">—</span>
+                <p id="wind-aqi-trend-label" class="font-label-data-sm text-outline uppercase tracking-wider" data-i18n="aqi_24h_trend">24h trend</p>
+              </div>
+            </div>
+            <div id="wind-aqi-spark-box" class="relative w-full h-12 rounded-lg bg-surface-container-lowest/60 overflow-hidden">
+              <svg id="wind-aqi-spark" class="w-full h-full" viewBox="0 0 280 48" preserveAspectRatio="none"></svg>
+            </div>
+            <p id="wind-aqi-note" class="font-label-data-sm text-on-surface-variant mt-2">—</p>
           </div>
 
           <div class="rounded-2xl bg-surface-container-low/80 backdrop-blur-xl p-space-md shadow-lg">
@@ -771,7 +753,6 @@
             <h1 class="font-headline-lg-mobile text-primary tracking-tight" data-i18n="cyclone_title">Cyclone & Vortex Tracking</h1>
             <p class="font-body-sm text-on-surface-variant mt-0.5" data-i18n="cyclone_sub">Active systems in Indian Ocean basins</p>
           </div>
-
           <div class="rounded-xl bg-surface-container-low/90 backdrop-blur-xl p-4 shadow-xl">
             <div class="flex items-center justify-between mb-2">
               <span class="font-label-data-sm uppercase tracking-widest text-secondary-fixed" data-i18n="basin_status">Basin Status</span>
@@ -792,7 +773,6 @@
               </div>
             </div>
           </div>
-
           <div class="rounded-xl bg-surface-container-low/95 p-4 shadow-xl">
             <h3 class="font-headline-sm text-on-surface mb-3" data-i18n="environmental">Environmental Favourability</h3>
             <div class="grid grid-cols-2 gap-2">
@@ -814,14 +794,13 @@
               </div>
             </div>
           </div>
-
           <div class="rounded-xl bg-error-container/25 p-4 shadow-xl">
             <div class="flex items-center gap-2 mb-2">
               <span class="material-symbols-outlined text-error text-[20px]">warning</span>
               <h3 class="font-headline-sm text-primary" data-i18n="preparedness">Preparedness</h3>
             </div>
             <p class="font-body-sm text-on-surface-variant" data-i18n="preparedness_text">
-              When a cyclone is active, Mausam tracks its position, intensity, and forecast cone via the IMD public feed. Check the official IMD website for real-time bulletins.
+              When a cyclone is active, Mausam tracks its position, intensity, and forecast cone via the IMD public feed.
             </p>
             <a href="https://rsmcnewdelhi.imd.gov.in/" target="_blank" class="mt-3 inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-primary-fixed font-label-data-md">
               <span class="material-symbols-outlined text-[16px]">open_in_new</span>
@@ -854,15 +833,13 @@
         </button>
       </div>
     </div>
-
     <div class="px-margin py-4 space-y-4">
       <div class="rounded-xl bg-surface-container/60 p-3 flex items-start gap-2.5">
         <span class="material-symbols-outlined text-surface-tint text-[18px] mt-0.5">lock</span>
         <p class="font-body-sm text-on-surface-variant leading-relaxed" data-i18n="health_privacy">
-          Your health profile is stored only on this device using localStorage. It is never sent to any server, AI model, or third party.
+          Your health profile is stored only on this device using localStorage.
         </p>
       </div>
-
       <div class="space-y-2">
         <label class="font-label-data-sm text-outline uppercase tracking-wider block" data-i18n="age_group">Age Group</label>
         <div class="grid grid-cols-4 gap-2">
@@ -888,7 +865,6 @@
           </button>
         </div>
       </div>
-
       <div class="space-y-2">
         <label class="font-label-data-sm text-outline uppercase tracking-wider block" data-i18n="health_conditions">Health Conditions</label>
         <div class="space-y-1.5">
@@ -896,7 +872,7 @@
             <input type="checkbox" class="health-check" data-cond="asthma">
             <div class="flex-1">
               <span class="font-body-md text-on-surface block" data-i18n="asthma">Asthma / Respiratory</span>
-              <span class="font-body-sm text-on-surface-variant" data-i18n="asthma_desc">Elevated AQI, humidity, dust sensitivity</span>
+              <span class="font-body-sm text-on-surface-variant" data-i18n="asthma_desc">Elevated AQI, humidity sensitivity</span>
             </div>
             <span class="material-symbols-outlined text-surface-tint text-[18px]">pulmonology</span>
           </label>
@@ -942,11 +918,35 @@
           </label>
         </div>
       </div>
-
       <div class="flex items-center gap-2 pt-2 pb-4">
         <button id="health-clear" class="flex-1 py-3 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface font-label-data-md font-medium transition-colors" data-i18n="clear_profile">Clear Profile</button>
         <button id="health-save" class="flex-[2] py-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm font-semibold shadow-[0_4px_16px_rgba(0,242,254,0.3)] active:scale-[0.98] transition-transform" data-i18n="save_apply">Save & Apply</button>
       </div>
+    </div>
+  </div>
+
+  <!-- LOCATION EDIT SHEET -->
+  <div id="loc-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <div id="loc-sheet" class="sheet fixed bottom-0 inset-x-0 z-[80] bg-surface-container-low rounded-t-3xl shadow-[0_-8px_32px_rgba(0,0,0,0.6)] pb-safe">
+    <div class="pt-3 pb-2 px-margin">
+      <div class="w-10 h-1 rounded-full bg-outline mx-auto mb-3"></div>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-headline-sm text-primary" data-i18n="set_location">Set Location</h2>
+        <button id="loc-close" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="relative">
+        <input id="loc-input" type="text" class="w-full rounded-xl bg-surface-container-high text-on-surface px-4 py-3 pr-11 font-body-md focus:outline-none focus:ring-2 focus:ring-primary-container/50" placeholder="Type a city…" data-i18n-placeholder="search_city">
+        <button id="loc-search" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">search</span>
+        </button>
+      </div>
+      <div id="loc-results" class="mt-3 space-y-1 max-h-64 overflow-y-auto"></div>
+      <button id="loc-gps" class="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-surface-container-high text-primary-fixed font-label-data-md">
+        <span class="material-symbols-outlined text-[18px]">my_location</span>
+        <span data-i18n="use_gps">Use current GPS location</span>
+      </button>
     </div>
   </div>
 
@@ -974,7 +974,7 @@
           </div>
         </div>
         <div class="flex items-center gap-1.5">
-          <button id="chat-clear-btn" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" title="Clear chat">
+          <button id="chat-clear-btn" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
             <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
           </button>
           <button id="chat-close-btn" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface">
@@ -1037,7 +1037,7 @@
 
   <script>
     // ============================================================
-    // INTERNATIONALIZATION (English + Hindi)
+    // I18N
     // ============================================================
     const I18N = {
       en: {
@@ -1047,6 +1047,10 @@
         updated_at: 'Updated', detecting: 'Detecting…', location_error: 'Location Error',
         loading_toast: 'Loading', updated_toast: 'Updated', error_toast: 'Error',
         could_not_fetch: 'Could not fetch data.',
+        using_default_location: 'Using default location',
+        offline_toast: 'Offline',
+        cached_data_prefix: 'Cached data (',
+        cached_data_suffix: ' min old)',
         health_active: 'Health Profile Active', edit: 'Edit',
         aqi: 'AQI', uv: 'UV', feels_like: 'Feels like', humidity: 'Humidity',
         ai_brief_title: 'Mausam AI Brief', ai_brief_subtitle: 'Personalized to your profile',
@@ -1059,7 +1063,7 @@
         aqi_good: 'Good', aqi_satisfactory: 'Satisfactory', aqi_moderate: 'Moderate',
         aqi_poor: 'Poor', aqi_vpoor: 'Very Poor', aqi_severe: 'Severe',
         extended_outlook: 'Extended Outlook', thermal_arc: 'Thermal Arc',
-        daily_telemetry: 'Daily Telemetry', tap_inspect: 'Tap to inspect', today: 'Today',
+        daily_telemetry: 'Daily Telemetry', tap_inspect: 'Tap to inspect', today: 'Today', now: 'Now',
         wind_title: 'Wind & Dynamic Flow', wind_vector: 'Wind vector at 10m',
         wind_streamline_feed: 'Live Wind Streamline Feed',
         streamlines: 'Streamline Field (24h)', flow_vectors: 'Flow vectors',
@@ -1075,17 +1079,17 @@
         no_active: 'No active system', environmental: 'Environmental Favourability',
         sst: 'Sea Surface Temp', wind_shear: 'Wind Shear', vorticity: 'Vorticity', genesis: 'Genesis Index',
         preparedness: 'Preparedness',
-        preparedness_text: 'When a cyclone is active, Mausam tracks its position, intensity, and forecast cone via the IMD public feed. Check the official IMD website for real-time bulletins.',
+        preparedness_text: 'When a cyclone is active, Mausam tracks its position, intensity, and forecast cone via the IMD public feed.',
         rsmc_bulletins: 'RSMC New Delhi Bulletins',
         why_matters: 'Why this matters for you',
         alert_rain_heavy: 'Heavy Rain Alert', alert_rain: 'Rain Advisory',
         alert_wind: 'High Wind Warning', alert_aqi: 'Air Quality Alert', alert_aqi_watch: 'Air Quality Watch',
         alert_heat: 'Heat Stress Warning', alert_heat_watch: 'Heat Advisory',
         health_title: 'Health Profile', health_subtitle: 'Personalizes alerts & advice',
-        health_privacy: 'Your health profile is stored only on this device using localStorage. It is never sent to any server, AI model, or third party.',
+        health_privacy: 'Your health profile is stored only on this device using localStorage.',
         age_group: 'Age Group', child: 'Child', teen: 'Teen', adult: 'Adult', senior: 'Senior',
         health_conditions: 'Health Conditions',
-        asthma: 'Asthma / Respiratory', asthma_desc: 'Elevated AQI, humidity, dust sensitivity',
+        asthma: 'Asthma / Respiratory', asthma_desc: 'Elevated AQI, humidity sensitivity',
         heart: 'Heart Condition', heart_desc: 'Heat stress, sudden temperature changes',
         allergies: 'Allergies', allergies_desc: 'Pollen, dust, mold sensitivity',
         pregnancy: 'Pregnancy', pregnancy_desc: 'Heat, AQI, hydration guidance',
@@ -1101,13 +1105,9 @@
         chip_rain: 'Will it rain today?', chip_air: 'Is the air safe?',
         chip_walk: 'Best time for a walk?', chip_umbrella: 'Should I carry an umbrella?',
         chat_placeholder: 'Ask about the weather…', clear_chat: 'Clear all messages?',
-        cond_clear: 'Clear Sky', cond_mainly: 'Mainly Clear', cond_partly: 'Partly Cloudy',
-        cond_overcast: 'Overcast', cond_fog: 'Foggy', cond_drizzle: 'Drizzle',
-        cond_rain: 'Rain', cond_heavy_rain: 'Heavy Rain', cond_snow: 'Snow',
-        cond_showers: 'Rain Showers', cond_thunder: 'Thunderstorm', cond_hail: 'Severe Hail Storm',
         impact_low: 'Low', impact_moderate: 'Moderate', impact_elevated: 'Elevated',
         scan: 'Scan', active: 'Active', threat: 'Threat', alert: 'Alert', watch: 'Watch',
-        gust_word: 'Gusts', high_short: 'H', low_short: 'L',
+        gust_word: 'gusts', high_short: 'H', low_short: 'L',
         w_clear: 'Clear Sky', w_mainly: 'Mainly Clear', w_partly: 'Partly Cloudy',
         w_overcast: 'Overcast', w_fog: 'Foggy', w_rime: 'Rime Fog',
         w_drizzle_light: 'Light Drizzle', w_drizzle: 'Drizzle', w_drizzle_dense: 'Dense Drizzle',
@@ -1123,7 +1123,11 @@
         aqi_max: 'Max', aqi_your_area: 'Your area', aqi_worst: 'Worst',
         wind_chill_label: 'Chill',
         sun_moon_title: 'Sun & Moon', sunrise: 'Sunrise', sunset: 'Sunset',
-        moonrise: 'Moonrise', moonset: 'Moonset', day_length: 'Day length'
+        moonrise: 'Moonrise', moonset: 'Moonset', day_length: 'Day length',
+        aqi_24h_trend: '24h trend',
+        aqi_trend_rising: 'Rising', aqi_trend_falling: 'Falling', aqi_trend_steady: 'Steady',
+        set_location: 'Set Location', use_gps: 'Use current GPS location',
+        search_city: 'Type a city…', no_matches: 'No matches'
       },
       hi: {
         nav_today: 'आज', nav_7day: '7-दिन', nav_wind: 'हवा', nav_lightning: 'बिजली', nav_cyclone: 'चक्रवात',
@@ -1132,6 +1136,10 @@
         updated_at: 'अपडेट', detecting: 'पता लगा रहे हैं…', location_error: 'स्थान त्रुटि',
         loading_toast: 'लोड हो रहा', updated_toast: 'अपडेट किया', error_toast: 'त्रुटि',
         could_not_fetch: 'डेटा नहीं मिल सका।',
+        using_default_location: 'डिफ़ॉल्ट स्थान उपयोग में',
+        offline_toast: 'ऑफ़लाइन',
+        cached_data_prefix: 'कैश डेटा (',
+        cached_data_suffix: ' मिन पुराना)',
         health_active: 'स्वास्थ्य प्रोफ़ाइल सक्रिय', edit: 'बदलें',
         aqi: 'वायु गुणवत्ता', uv: 'यूवी', feels_like: 'महसूस', humidity: 'आर्द्रता',
         ai_brief_title: 'मौसम AI ब्रीफ', ai_brief_subtitle: 'आपकी प्रोफ़ाइल के अनुसार',
@@ -1144,7 +1152,7 @@
         aqi_good: 'अच्छा', aqi_satisfactory: 'संतोषजनक', aqi_moderate: 'मध्यम',
         aqi_poor: 'खराब', aqi_vpoor: 'बहुत खराब', aqi_severe: 'गंभीर',
         extended_outlook: 'विस्तृत पूर्वानुमान', thermal_arc: 'तापमान चाप',
-        daily_telemetry: 'दैनिक टेलीमेट्री', tap_inspect: 'विवरण के लिए टैप करें', today: 'आज',
+        daily_telemetry: 'दैनिक टेलीमेट्री', tap_inspect: 'विवरण के लिए टैप करें', today: 'आज', now: 'अब',
         wind_title: 'हवा और गतिशील प्रवाह', wind_vector: '10 मीटर पर हवा',
         wind_streamline_feed: 'लाइव हवा प्रवाह',
         streamlines: 'प्रवाह क्षेत्र (24घं)', flow_vectors: 'प्रवाह सदिश',
@@ -1160,22 +1168,22 @@
         no_active: 'कोई सक्रिय प्रणाली नहीं', environmental: 'पर्यावरणीय अनुकूलता',
         sst: 'समुद्री सतह तापमान', wind_shear: 'हवा कतरन', vorticity: 'वॉर्टिसिटी', genesis: 'उत्पत्ति सूचकांक',
         preparedness: 'तैयारी',
-        preparedness_text: 'जब चक्रवात सक्रिय हो, मौसम IMD फ़ीड के माध्यम से उसकी स्थिति और तीव्रता ट्रैक करता है। वास्तविक समय बुलेटिन के लिए IMD वेबसाइट देखें।',
+        preparedness_text: 'जब चक्रवात सक्रिय हो, मौसम IMD फ़ीड से उसकी स्थिति ट्रैक करता है।',
         rsmc_bulletins: 'RSMC नई दिल्ली बुलेटिन',
         why_matters: 'यह आपके लिए क्यों मायने रखता है',
         alert_rain_heavy: 'भारी बारिश की चेतावनी', alert_rain: 'बारिश सलाह',
         alert_wind: 'तेज़ हवा की चेतावनी', alert_aqi: 'वायु गुणवत्ता चेतावनी', alert_aqi_watch: 'वायु गुणवत्ता निगरानी',
         alert_heat: 'गर्मी की चेतावनी', alert_heat_watch: 'गर्मी सलाह',
         health_title: 'स्वास्थ्य प्रोफ़ाइल', health_subtitle: 'चेतावनियाँ व्यक्तिगत बनाता है',
-        health_privacy: 'आपकी स्वास्थ्य प्रोफ़ाइल केवल इस डिवाइस पर सहेजी जाती है। किसी सर्वर या तीसरे पक्ष को नहीं भेजी जाती।',
+        health_privacy: 'आपकी स्वास्थ्य प्रोफ़ाइल केवल इस डिवाइस पर सहेजी जाती है।',
         age_group: 'आयु वर्ग', child: 'बच्चा', teen: 'किशोर', adult: 'वयस्क', senior: 'वरिष्ठ',
         health_conditions: 'स्वास्थ्य स्थितियाँ',
-        asthma: 'दमा / श्वसन', asthma_desc: 'वायु गुणवत्ता, नमी, धूल संवेदनशीलता',
-        heart: 'हृदय रोग', heart_desc: 'गर्मी, तापमान में अचानक बदलाव',
-        allergies: 'एलर्जी', allergies_desc: 'पराग, धूल, फंगस संवेदनशीलता',
+        asthma: 'दमा / श्वसन', asthma_desc: 'वायु गुणवत्ता, नमी संवेदनशीलता',
+        heart: 'हृदय रोग', heart_desc: 'गर्मी, तापमान बदलाव',
+        allergies: 'एलर्जी', allergies_desc: 'पराग, धूल, फंगस',
         pregnancy: 'गर्भावस्था', pregnancy_desc: 'गर्मी, वायु गुणवत्ता, जलयोजन',
         pregnancy_unavailable: 'इस आयु वर्ग में उपलब्ध नहीं',
-        diabetes: 'मधुमेह', diabetes_desc: 'गर्मी, निर्जलीकरण, मौसम',
+        diabetes: 'मधुमेह', diabetes_desc: 'गर्मी, निर्जलीकरण',
         outdoor_work: 'बाहरी कार्यकर्ता / एथलीट', outdoor_desc: 'यूवी, गर्मी, वायु गुणवत्ता',
         clear_profile: 'प्रोफ़ाइल साफ़ करें', save_apply: 'सहेजें और लागू करें',
         profile_saved: 'प्रोफ़ाइल सहेजी', profile_cleared: 'प्रोफ़ाइल साफ़ की',
@@ -1186,10 +1194,6 @@
         chip_rain: 'आज बारिश होगी?', chip_air: 'हवा सुरक्षित है?',
         chip_walk: 'टहलने का अच्छा समय?', chip_umbrella: 'छाता ले जाना चाहिए?',
         chat_placeholder: 'मौसम के बारे में पूछें…', clear_chat: 'सभी संदेश मिटाएँ?',
-        cond_clear: 'साफ़ आसमान', cond_mainly: 'मुख्यतः साफ़', cond_partly: 'आंशिक बादल',
-        cond_overcast: 'बादल छाए', cond_fog: 'कोहरा', cond_drizzle: 'बूंदाबांदी',
-        cond_rain: 'बारिश', cond_heavy_rain: 'भारी बारिश', cond_snow: 'बर्फ',
-        cond_showers: 'बारिश की बौछारें', cond_thunder: 'आंधी-तूफ़ान', cond_hail: 'भारी ओलावृष्टि',
         impact_low: 'कम', impact_moderate: 'मध्यम', impact_elevated: 'अधिक',
         scan: 'स्कैन', active: 'सक्रिय', threat: 'खतरा', alert: 'चेतावनी', watch: 'निगरानी',
         gust_word: 'झोंके', high_short: 'अ', low_short: 'नि',
@@ -1208,7 +1212,11 @@
         aqi_max: 'अधिकतम', aqi_your_area: 'आपका क्षेत्र', aqi_worst: 'सबसे खराब',
         wind_chill_label: 'ठंड',
         sun_moon_title: 'सूर्य और चंद्रमा', sunrise: 'सूर्योदय', sunset: 'सूर्यास्त',
-        moonrise: 'चंद्रोदय', moonset: 'चंद्रास्त', day_length: 'दिन की लंबाई'
+        moonrise: 'चंद्रोदय', moonset: 'चंद्रास्त', day_length: 'दिन की लंबाई',
+        aqi_24h_trend: '24घं रुझान',
+        aqi_trend_rising: 'बढ़ रहा', aqi_trend_falling: 'घट रहा', aqi_trend_steady: 'स्थिर',
+        set_location: 'स्थान सेट करें', use_gps: 'जीपीएस स्थान उपयोग करें',
+        search_city: 'शहर का नाम लिखें…', no_matches: 'कोई मेल नहीं'
       }
     };
 
@@ -1223,36 +1231,6 @@
     function t(key) {
       return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
     }
-
-    // ============================================================
-    // THEME
-    // ============================================================
-    let currentTheme = (() => {
-      try {
-        const saved = localStorage.getItem('mausam_theme');
-        if (saved === 'light' || saved === 'dark') return saved;
-        return 'dark';
-      } catch (e) { return 'dark'; }
-    })();
-
-    function applyTheme() {
-      const html = document.documentElement;
-      if (currentTheme === 'light') {
-        html.classList.remove('dark');
-        html.classList.add('light');
-      } else {
-        html.classList.remove('light');
-        html.classList.add('dark');
-      }
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = currentTheme === 'light' ? 'light_mode' : 'dark_mode';
-    }
-
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-      try { localStorage.setItem('mausam_theme', currentTheme); } catch(e) {}
-      applyTheme();
-    });
 
     // ============================================================
     // STATE
@@ -1270,33 +1248,41 @@
     const $$ = (s) => document.querySelectorAll(s);
 
     // ============================================================
-    // WMO WEATHER CODE
+    // OFFLINE CACHE — last good weather payload
+    // ============================================================
+    const CACHE_KEY = 'mausam_cache_v1';
+    function saveCache() {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          t: Date.now(), weather: state.weather, aqi: state.airQuality,
+          lat: state.lat, lon: state.lon, name: state.locationName
+        }));
+      } catch (e) {}
+    }
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const c = JSON.parse(raw);
+        return (c && c.weather) ? c : null;
+      } catch (e) { return null; }
+    }
+
+    // ============================================================
+    // WMO MAP
     // ============================================================
     const WMO = {
-      0:  { k: 'w_clear', i: 'clear_day' },
-      1:  { k: 'w_mainly', i: 'wb_sunny' },
-      2:  { k: 'w_partly', i: 'partly_cloudy_day' },
-      3:  { k: 'w_overcast', i: 'cloud' },
-      45: { k: 'w_fog', i: 'foggy' },
-      48: { k: 'w_rime', i: 'foggy' },
-      51: { k: 'w_drizzle_light', i: 'rainy_light' },
-      53: { k: 'w_drizzle', i: 'rainy' },
-      55: { k: 'w_drizzle_dense', i: 'rainy' },
-      61: { k: 'w_rain_light', i: 'rainy' },
-      63: { k: 'w_rain', i: 'rainy' },
-      65: { k: 'w_rain_heavy', i: 'rainy' },
-      71: { k: 'w_snow_light', i: 'weather_mix' },
-      73: { k: 'w_snow', i: 'weather_mix' },
-      75: { k: 'w_snow_heavy', i: 'weather_mix' },
-      80: { k: 'w_showers', i: 'rainy' },
-      81: { k: 'w_showers', i: 'rainy' },
-      82: { k: 'w_showers_violent', i: 'thunderstorm' },
-      95: { k: 'w_thunder', i: 'thunderstorm' },
-      96: { k: 'w_thunder', i: 'thunderstorm' },
-      99: { k: 'w_hail', i: 'thunderstorm' }
+      0:{k:'w_clear',i:'clear_day'},1:{k:'w_mainly',i:'wb_sunny'},2:{k:'w_partly',i:'partly_cloudy_day'},
+      3:{k:'w_overcast',i:'cloud'},45:{k:'w_fog',i:'foggy'},48:{k:'w_rime',i:'foggy'},
+      51:{k:'w_drizzle_light',i:'rainy_light'},53:{k:'w_drizzle',i:'rainy'},55:{k:'w_drizzle_dense',i:'rainy'},
+      61:{k:'w_rain_light',i:'rainy'},63:{k:'w_rain',i:'rainy'},65:{k:'w_rain_heavy',i:'rainy'},
+      71:{k:'w_snow_light',i:'weather_mix'},73:{k:'w_snow',i:'weather_mix'},75:{k:'w_snow_heavy',i:'weather_mix'},
+      80:{k:'w_showers',i:'rainy'},81:{k:'w_showers',i:'rainy'},82:{k:'w_showers_violent',i:'thunderstorm'},
+      95:{k:'w_thunder',i:'thunderstorm'},96:{k:'w_thunder',i:'thunderstorm'},99:{k:'w_hail',i:'thunderstorm'}
     };
     const wInfo = (c) => WMO[c] || { k: 'w_clear', i: 'help' };
     const wDesc = (c) => t(wInfo(c).k);
+    const isThunderCode = (c) => c === 95 || c === 96 || c === 99;
 
     // ============================================================
     // HEALTH PROFILE
@@ -1313,29 +1299,25 @@
             state.health.conditions = Array.isArray(p.conditions) ? p.conditions : [];
           }
         }
-      } catch (e) { console.warn('Health load failed', e); }
+      } catch (e) {}
       renderHealthUI();
     }
     function saveHealth() {
       try { localStorage.setItem(HEALTH_KEY, JSON.stringify(state.health)); }
-      catch (e) { console.warn('Health save failed', e); }
+      catch (e) {}
     }
     function isSensitive() {
       return state.health.conditions.length > 0 ||
              state.health.age === 'child' ||
              state.health.age === 'senior';
     }
-
-    // Constraint: pregnancy incompatible with child/senior
     function enforceHealthConstraints() {
       const incompatible = state.health.age === 'child' || state.health.age === 'senior';
       const pregnancyIdx = state.health.conditions.indexOf('pregnancy');
       if (incompatible && pregnancyIdx >= 0) {
         state.health.conditions.splice(pregnancyIdx, 1);
       }
-      return incompatible;
     }
-
     function renderHealthUI() {
       if (isSensitive()) {
         $('#health-badge').classList.remove('hidden');
@@ -1361,8 +1343,6 @@
           b.querySelectorAll('.font-label-data-sm')[0]?.classList.remove('text-primary-fixed');
         }
       });
-
-      // Pregnancy constraint
       const incompatible = state.health.age === 'child' || state.health.age === 'senior';
       const pregRow = document.getElementById('pregnancy-row');
       const pregCheck = document.getElementById('pregnancy-check');
@@ -1372,21 +1352,17 @@
           pregCheck.disabled = true;
           pregCheck.checked = false;
           pregRow.classList.add('opacity-40', 'pointer-events-none');
-          if (pregHint) pregHint.setAttribute('data-i18n', 'pregnancy_unavailable');
-          if (pregHint) pregHint.textContent = t('pregnancy_unavailable');
+          if (pregHint) { pregHint.setAttribute('data-i18n', 'pregnancy_unavailable'); pregHint.textContent = t('pregnancy_unavailable'); }
         } else {
           pregCheck.disabled = false;
           pregRow.classList.remove('opacity-40', 'pointer-events-none');
-          if (pregHint) pregHint.setAttribute('data-i18n', 'pregnancy_desc');
-          if (pregHint) pregHint.textContent = t('pregnancy_desc');
+          if (pregHint) { pregHint.setAttribute('data-i18n', 'pregnancy_desc'); pregHint.textContent = t('pregnancy_desc'); }
         }
       }
-
       $$('.health-check').forEach(cb => {
         cb.checked = state.health.conditions.includes(cb.dataset.cond);
       });
     }
-
     function openHealthSheet() {
       $('#health-overlay').classList.remove('opacity-0', 'pointer-events-none');
       $('#health-sheet').classList.add('open');
@@ -1400,7 +1376,6 @@
     $('#health-edit-inline').addEventListener('click', openHealthSheet);
     $('#health-close').addEventListener('click', closeHealthSheet);
     $('#health-overlay').addEventListener('click', closeHealthSheet);
-
     $$('.age-btn').forEach(b => {
       b.addEventListener('click', () => {
         state.health.age = state.health.age === b.dataset.age ? null : b.dataset.age;
@@ -1416,11 +1391,8 @@
         } else {
           state.health.conditions = state.health.conditions.filter(x => x !== c);
         }
-        // If pregnancy was just checked, ensure child/senior age is cleared
         if (c === 'pregnancy' && cb.checked) {
-          if (state.health.age === 'child' || state.health.age === 'senior') {
-            state.health.age = null;
-          }
+          if (state.health.age === 'child' || state.health.age === 'senior') state.health.age = null;
         }
         renderHealthUI();
       });
@@ -1444,7 +1416,74 @@
     });
 
     // ============================================================
-    // GEOLOCATION
+    // LOCATION EDIT SHEET
+    // ============================================================
+    function openLocSheet() {
+      $('#loc-overlay').classList.remove('opacity-0', 'pointer-events-none');
+      $('#loc-sheet').classList.add('open');
+      $('#loc-input').value = '';
+      $('#loc-results').innerHTML = '';
+      setTimeout(() => $('#loc-input').focus(), 300);
+    }
+    function closeLocSheet() {
+      $('#loc-overlay').classList.add('opacity-0', 'pointer-events-none');
+      $('#loc-sheet').classList.remove('open');
+    }
+    $('#loc-close').addEventListener('click', closeLocSheet);
+    $('#loc-overlay').addEventListener('click', closeLocSheet);
+    $('#loc-gps').addEventListener('click', async () => {
+      closeLocSheet();
+      showToast(t('detecting'), '');
+      try {
+        const pos = await getLiveLocation();
+        const name = await reverseGeocode(pos.lat, pos.lon);
+        await loadAll(pos.lat, pos.lon, name);
+      } catch(e) { showToast(t('location_error'), t('using_default_location')); }
+    });
+
+    let locSearchTimer = null;
+    $('#loc-input').addEventListener('input', (e) => {
+      clearTimeout(locSearchTimer);
+      const q = e.target.value.trim();
+      if (q.length < 2) { $('#loc-results').innerHTML = ''; return; }
+      locSearchTimer = setTimeout(() => searchCity(q), 300);
+    });
+    $('#loc-search').addEventListener('click', () => {
+      const q = $('#loc-input').value.trim();
+      if (q.length >= 2) searchCity(q);
+    });
+
+    async function searchCity(q) {
+      try {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=${currentLang}`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const data = await res.json();
+        const results = data.results || [];
+        if (results.length === 0) {
+          $('#loc-results').innerHTML = `<p class="font-body-sm text-on-surface-variant p-3">${t('no_matches')}</p>`;
+          return;
+        }
+        $('#loc-results').innerHTML = results.map(r => `
+          <button class="loc-result w-full text-left p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container-high transition-colors" data-lat="${r.latitude}" data-lon="${r.longitude}" data-name="${r.name}">
+            <span class="font-body-md text-on-surface block">${r.name}</span>
+            <span class="font-body-sm text-on-surface-variant">${r.admin1 || ''}${r.admin1 && r.country ? ', ' : ''}${r.country || ''}</span>
+          </button>
+        `).join('');
+        $$('.loc-result').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lat = parseFloat(btn.dataset.lat);
+            const lon = parseFloat(btn.dataset.lon);
+            const name = btn.dataset.name;
+            closeLocSheet();
+            loadAll(lat, lon, name);
+          });
+        });
+      } catch (e) { console.warn('Search failed', e); }
+    }
+
+    // ============================================================
+    // GEOLOCATION + REVERSE GEOCODING
     // ============================================================
     function getLiveLocation() {
       return new Promise((resolve, reject) => {
@@ -1459,13 +1498,27 @@
 
     async function reverseGeocode(lat, lon) {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`, {
+        const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+        if (res.ok) {
+          const d = await res.json();
+          const name = d.locality || d.city || d.principalSubdivision || d.countryName;
+          if (name) {
+            if (d.locality && d.city && d.locality !== d.city) {
+              return `${d.locality}, ${d.city}`;
+            }
+            return name;
+          }
+        }
+      } catch (e) { console.warn('BigDataCloud failed, falling back', e); }
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12`, {
           headers: { 'User-Agent': 'MausamWeatherApp/1.0' }
         });
         if (res.ok) {
           const data = await res.json();
           const addr = data.address || {};
-          return addr.city || addr.town || addr.village || addr.state_district || addr.state
+          return addr.suburb || addr.city_district || addr.city || addr.town || addr.village
+                 || addr.state_district || addr.state
                  || `Lat ${lat.toFixed(2)}, Lon ${lon.toFixed(2)}`;
         }
       } catch (e) {}
@@ -1491,7 +1544,9 @@
       const params = new URLSearchParams({
         latitude: lat, longitude: lon,
         current: 'european_aqi,us_aqi,pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone',
-        timezone: 'Asia/Kolkata'
+        hourly: 'pm2_5,pm10',
+        timezone: 'Asia/Kolkata',
+        forecast_days: '2'
       });
       const r = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?${params}`);
       if (!r.ok) throw new Error('AQI fetch failed');
@@ -1616,6 +1671,15 @@
       if (aqi <= 400)      return { color: '#cc0022', label: t('aqi_vpoor') };
       return                      { color: '#8b0033', label: t('aqi_severe') };
     }
+    function cpcbColorRGB(aqi) {
+      if (aqi == null)     return [132, 148, 149];
+      if (aqi <= 50)       return [103, 244, 183];
+      if (aqi <= 100)      return [232, 247, 93];
+      if (aqi <= 200)      return [255, 170, 0];
+      if (aqi <= 300)      return [255, 85, 51];
+      if (aqi <= 400)      return [204, 0, 34];
+      return               [139, 0, 51];
+    }
     function subIndexCPCB(value, breakpoints, indices) {
       if (value == null) return null;
       const v = Math.max(0, value);
@@ -1635,6 +1699,7 @@
       if (c.length === 0) return null;
       return Math.round(Math.max(...c));
     }
+
     async function initAqiMap(lat, lon) {
       if (state.aqiMap) {
         state.aqiMap.setView([lat, lon], 7);
@@ -1652,13 +1717,14 @@
       if (state.aqiTimer) clearInterval(state.aqiTimer);
       state.aqiTimer = setInterval(() => refreshAqiOverlay(state.lat, state.lon), 300000);
     }
+
     async function refreshAqiOverlay(lat, lon) {
       if (!state.aqiMap || !state.aqiLayer) return;
       try {
-        const step = 1.0;
+        const step = 0.7;
         const grid = [];
-        for (let dy = -2; dy <= 2; dy++)
-          for (let dx = -2; dx <= 2; dx++)
+        for (let dy = -3; dy <= 3; dy++)
+          for (let dx = -3; dx <= 3; dx++)
             grid.push([lat + dy * step, lon + dx * step]);
         const lats = grid.map(g => g[0].toFixed(4)).join(',');
         const lons = grid.map(g => g[1].toFixed(4)).join(',');
@@ -1670,30 +1736,53 @@
         state.aqiLayer.clearLayers();
         let maxAqi = 0, worstPoint = null;
         const thresholds = getThresholds();
+        const points = [];
         results.forEach((pt, idx) => {
           const pm25 = pt.current?.pm2_5 ?? null;
           const pm10 = pt.current?.pm10 ?? null;
           const aqi = calcCPCB_AQI(pm25, pm10);
           if (aqi == null) return;
           if (aqi > maxAqi) { maxAqi = aqi; worstPoint = grid[idx]; }
-          const { color } = cpcbColor(aqi);
-          const [glat, glon] = grid[idx];
-          const radius = 14000 + Math.min(18000, aqi * 40);
-          const opacity = 0.20 + Math.min(0.35, aqi / 1500);
-          L.circle([glat, glon], { radius, color, fillColor: color, fillOpacity: opacity, weight: 1 }).addTo(state.aqiLayer);
-          if (aqi >= thresholds.aqiWarn) {
-            L.circle([glat, glon], {
-              radius: radius + 8000, color, fillColor: 'transparent',
-              fillOpacity: 0, weight: 2, dashArray: '4 4'
+          points.push({ lat: grid[idx][0], lon: grid[idx][1], aqi });
+        });
+
+        const radiusMeters = 55000;
+        points.forEach(p => {
+          const [r, g, b] = cpcbColorRGB(p.aqi);
+          const opacity = 0.18 + Math.min(0.28, p.aqi / 1800);
+          L.circle([p.lat, p.lon], {
+            radius: radiusMeters,
+            color: 'transparent',
+            fillColor: `rgb(${r},${g},${b})`,
+            fillOpacity: opacity,
+            weight: 0,
+            interactive: false
+          }).addTo(state.aqiLayer);
+        });
+
+        points.forEach(p => {
+          if (p.aqi >= thresholds.aqiWarn) {
+            const [r, g, b] = cpcbColorRGB(p.aqi);
+            L.circle([p.lat, p.lon], {
+              radius: radiusMeters * 0.55,
+              color: `rgb(${r},${g},${b})`,
+              fillColor: 'transparent',
+              fillOpacity: 0,
+              weight: 1.5,
+              dashArray: '4 4',
+              interactive: false
             }).addTo(state.aqiLayer);
           }
         });
+
         L.circleMarker([lat, lon], {
           radius: 7, color: '#e0fdff', fillColor: '#00f2fe', fillOpacity: 1, weight: 2
         }).addTo(state.aqiLayer);
+
         const cat = cpcbColor(maxAqi);
         $('#aqi-map-max').textContent = `${t('aqi_max')}: ${maxAqi} (${cat.label})`;
         $('#aqi-map-max').style.color = cat.color;
+
         if (worstPoint) {
           const dist = haversine(lat, lon, worstPoint[0], worstPoint[1]);
           const dir = compassName(bearing(lat, lon, worstPoint[0], worstPoint[1]));
@@ -1709,7 +1798,7 @@
     }
 
     // ============================================================
-    // AQI CALC (header)
+    // AQI CALC + SPARKLINE
     // ============================================================
     function calcAQI(pm25) {
       if (pm25 == null) return { v: null, l: '—' };
@@ -1729,6 +1818,78 @@
       return { v: aqi, l };
     }
 
+    function renderWindAqiPanel(aqi) {
+      if (!aqi || !aqi.current) return;
+      const a = calcAQI(aqi.current.pm2_5);
+      if (a.v == null) return;
+      $('#wind-aqi-value').textContent = a.v;
+      const cat = cpcbColor(a.v);
+      $('#wind-aqi-cat').textContent = cat.label;
+      $('#wind-aqi-cat').style.background = cat.color;
+      $('#wind-aqi-cat').style.color = (a.v <= 100) ? '#00373a' : '#ffffff';
+
+      if (aqi.hourly && aqi.hourly.time && aqi.hourly.pm2_5) {
+        const times = aqi.hourly.time;
+        const pm25 = aqi.hourly.pm2_5;
+        const now = new Date();
+        let currentIdx = 0;
+        for (let i = 0; i < times.length; i++) {
+          if (new Date(times[i]) <= now) currentIdx = i;
+          else break;
+        }
+        const series = [];
+        for (let i = currentIdx; i < Math.min(currentIdx + 24, pm25.length); i++) {
+          const val = pm25[i];
+          if (val != null) series.push(calcAQI(val).v);
+        }
+        if (series.length > 0) {
+          drawSparkline(series);
+          const first = series[0];
+          const last = series[series.length - 1];
+          const delta = last - first;
+          let trendKey = 'aqi_trend_steady';
+          if (delta >= 15) trendKey = 'aqi_trend_rising';
+          else if (delta <= -15) trendKey = 'aqi_trend_falling';
+          $('#wind-aqi-delta').textContent = `${t(trendKey)} (${delta >= 0 ? '+' : ''}${delta})`;
+          const trendColor = trendKey === 'aqi_trend_rising' ? '#ffb4ab' : trendKey === 'aqi_trend_falling' ? '#67f4b7' : '#b9cacb';
+          $('#wind-aqi-delta').style.color = trendColor;
+          $('#wind-aqi-note').textContent = trendKey === 'aqi_trend_rising'
+            ? (currentLang === 'hi' ? 'अगले 24घं में वायु गुणवत्ता बिगड़ सकती है।' : 'Air quality may worsen over the next 24 hours.')
+            : trendKey === 'aqi_trend_falling'
+            ? (currentLang === 'hi' ? 'अगले 24घं में सुधार अपेक्षित।' : 'Improvement expected over the next 24 hours.')
+            : (currentLang === 'hi' ? 'वायु गुणवत्ता स्थिर रहने की संभावना।' : 'Air quality is expected to stay steady.');
+        }
+      }
+    }
+
+    function drawSparkline(values) {
+      const svg = $('#wind-aqi-spark');
+      if (!svg) return;
+      const w = 280, h = 48, pad = 4;
+      const min = Math.min(...values), max = Math.max(...values);
+      const range = (max - min) || 1;
+      const n = values.length;
+      const points = values.map((v, i) => {
+        const x = pad + (i / (n - 1)) * (w - pad * 2);
+        const y = h - pad - ((v - min) / range) * (h - pad * 2);
+        return [x, y];
+      });
+      const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
+      const areaD = pathD + ` L ${w - pad} ${h} L ${pad} ${h} Z`;
+      const [r, g, b] = cpcbColorRGB(values[values.length - 1] || 100);
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="aqiSparkGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgb(${r},${g},${b})" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="rgb(${r},${g},${b})" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaD}" fill="url(#aqiSparkGrad)" vector-effect="non-scaling-stroke"/>
+        <path d="${pathD}" fill="none" stroke="rgb(${r},${g},${b})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+        <circle cx="${points[points.length-1][0].toFixed(1)}" cy="${points[points.length-1][1].toFixed(1)}" r="3" fill="rgb(${r},${g},${b})" vector-effect="non-scaling-stroke"/>
+      `;
+    }
+
     // ============================================================
     // HEALTH-AWARE THRESHOLDS
     // ============================================================
@@ -1743,8 +1904,6 @@
         aqiWarn: resp || cardiac || fragile ? 100 : 200,
         heatWatch: fragile ? 35 : 38,
         heatWarn: fragile ? 40 : 42,
-        coldWatch: fragile ? 12 : 8,
-        coldWarn: fragile ? 6 : 2,
         uvWatch: h.age === 'child' || outdoor ? 5 : 7,
         uvWarn: h.age === 'child' || outdoor ? 8 : 10,
         gustWatch: outdoor ? 35 : 45,
@@ -1758,47 +1917,28 @@
     }
 
     // ============================================================
-    // SUN & MOON — compute and render
+    // SUN & MOON
     // ============================================================
     function formatTime(iso) {
       if (!iso) return '—';
       const d = new Date(iso);
       return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
-
-    // Approximate moonrise/moonset via SunCalc-like math (simple version)
-    // Using a compact formula good to ~15 min accuracy.
     function computeMoonTimes(date, lat, lon) {
-      // Days since J2000
       const rad = Math.PI / 180;
       const dayMs = 86400000;
       const J1970 = 2440588, J2000 = 2451545;
       const toJulian = (d) => d.valueOf() / dayMs - 0.5 + J1970;
       const toDays = (d) => toJulian(d) - J2000;
-
       const e = rad * 23.4397;
       const d = toDays(date);
       const lw = rad * -lon;
       const phi = rad * lat;
-
-      // Sun position (for sidereal time)
-      const M = rad * (357.5291 + 0.98560028 * d);
-      const C = rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
-      const P = rad * 102.9372;
-      const L = M + C + P + Math.PI;
-
-      // Sidereal time at Greenwich
-      const theta0 = rad * (280.16 + 360.9856235 * d) + lw;
-
-      // Moon position (simple approximation)
       const Lp = rad * (218.316 + 13.176396 * d);
       const Mp = rad * (134.963 + 13.064993 * d);
       const Fp = rad * (93.272 + 13.229350 * d);
-
       const lambda = Lp + rad * 6.289 * Math.sin(Mp);
       const beta = rad * 5.128 * Math.sin(Fp);
-      const dist = 385001 - 20905 * Math.cos(Mp);
-
       const ra = Math.atan2(
         Math.sin(lambda) * Math.cos(e) - Math.tan(beta) * Math.sin(e),
         Math.cos(lambda)
@@ -1806,33 +1946,22 @@
       const dec = Math.asin(
         Math.sin(beta) * Math.cos(e) + Math.cos(beta) * Math.sin(e) * Math.sin(lambda)
       );
-
-      // Hour angle for altitude 0 (rise/set)
+      const theta0 = rad * (280.16 + 360.9856235 * d) + lw;
       const h0 = rad * (-0.583);
       const cosH = (Math.sin(h0) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec));
-      if (cosH < -1 || cosH > 1) {
-        return { rise: null, set: null }; // moon never rises or never sets that day
-      }
+      if (cosH < -1 || cosH > 1) return { rise: null, set: null };
       const H = Math.acos(cosH);
-
-      const lst = theta0 + lw * 0; // sidereal time at longitude
+      const lst = theta0;
       const transit = (ra - lst + Math.PI * 4) % (Math.PI * 2);
       const riseHa = transit - H;
       const setHa = transit + H;
-
-      const toHours = (ha) => {
-        const hr = ((ha / (Math.PI * 2)) * 24 + 24) % 24;
-        return hr;
-      };
-      const riseHr = toHours(riseHa);
-      const setHr = toHours(setHa);
-
+      const toHours = (ha) => ((ha / (Math.PI * 2)) * 24 + 24) % 24;
       const base = new Date(date); base.setHours(0, 0, 0, 0);
-      const rise = new Date(base.getTime() + riseHr * 3600 * 1000);
-      const set = new Date(base.getTime() + setHr * 3600 * 1000);
-      return { rise, set };
+      return {
+        rise: new Date(base.getTime() + toHours(riseHa) * 3600 * 1000),
+        set: new Date(base.getTime() + toHours(setHa) * 3600 * 1000)
+      };
     }
-
     function renderSunMoon(w) {
       const d = w.daily;
       if (!d || !d.sunrise || !d.sunrise[0]) return;
@@ -1840,31 +1969,22 @@
       const sunset = d.sunset[0];
       $('#sunrise-time').textContent = formatTime(sunrise);
       $('#sunset-time').textContent = formatTime(sunset);
-
-      // Day length
       const riseDate = new Date(sunrise);
       const setDate = new Date(sunset);
       const dayMs = setDate - riseDate;
       const hrs = Math.floor(dayMs / 3600000);
       const mins = Math.floor((dayMs % 3600000) / 60000);
       $('#day-length').textContent = `${t('day_length')}: ${hrs}h ${mins}m`;
-
-      // Sun position along the arc
       const now = new Date();
-      const total = dayMs;
       let progress = 0;
       if (now < riseDate) progress = 0;
       else if (now > setDate) progress = 1;
-      else progress = (now - riseDate) / total;
-
+      else progress = (now - riseDate) / dayMs;
       const arcPath = document.getElementById('sun-progress-arc');
       if (arcPath) {
-        // Total arc length is approximately 2 * quarter of ellipse; simplify by using pathLength
         const len = arcPath.getTotalLength();
         arcPath.style.strokeDasharray = `${progress * len} ${len}`;
       }
-
-      // Sun dot position along the arc
       const sunDot = document.getElementById('sun-dot');
       if (sunDot && arcPath) {
         const len = arcPath.getTotalLength();
@@ -1872,8 +1992,6 @@
         sunDot.setAttribute('cx', pt.x);
         sunDot.setAttribute('cy', pt.y);
       }
-
-      // Moon times
       try {
         const mt = computeMoonTimes(new Date(), state.lat, state.lon);
         $('#moonrise-time').textContent = mt.rise ? mt.rise.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
@@ -1885,7 +2003,7 @@
     }
 
     // ============================================================
-    // RENDER: TODAY
+    // RENDER: TODAY (no longer initializes maps; that's done in loadAll)
     // ============================================================
     function renderToday(w, aqi) {
       const c = w.current, d = w.daily;
@@ -1904,23 +2022,21 @@
         if (a.v !== null) {
           $('#aqi-value').textContent = `${t('aqi')} ${a.v}`;
           $('#aqi-label').textContent = a.l;
-          // AQI grid card
           $('#aqi-grid-value').textContent = a.v;
           $('#aqi-grid-label').textContent = a.l;
-          const color = a.v <= 50 ? '#67f4b7' : a.v <= 100 ? '#e8f75d' : a.v <= 200 ? '#ffaa00' : a.v <= 300 ? '#ff5533' : a.v <= 400 ? '#cc0022' : '#8b0033';
-          $('#aqi-grid-label').style.color = color;
+          const cat = cpcbColor(a.v);
+          $('#aqi-grid-label').style.color = cat.color;
         }
       }
       $('#precip-value').textContent = (d.precipitation_sum[0] || 0).toFixed(1);
       $('#wind-value').textContent = Math.round(c.wind_speed_10m);
-      $('#gust-value').textContent = `G${Math.round(c.wind_gusts_10m)}`;
+      $('#gust-value').textContent = `${t('gust_word')} ${Math.round(c.wind_gusts_10m)}`;
       $('#humidity-grid').textContent = `${c.relative_humidity_2m}%`;
       $('#last-updated').textContent = `${t('updated_at')} ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
       renderSunMoon(w);
       renderAIBrief(w, aqi);
       renderHourly(w);
-      initRadar(state.lat, state.lon);
-      initAqiMap(state.lat, state.lon);
+      renderWindAqiPanel(aqi);
     }
 
     function renderAIBrief(w, aqi) {
@@ -1956,7 +2072,7 @@
         advice.push(currentLang === 'hi' ? `गर्मी से बचाव — पानी पीते रहें।` : `Heat risk is high for you — drink water often.`);
       }
       if (uv >= th.uvWatch && state.health.age === 'child') {
-        advice.push(currentLang === 'hi' ? `बच्चों के लिए यूवी अधिक।` : `UV is high for children — hat and shade recommended.`);
+        advice.push(currentLang === 'hi' ? `बच्चों के लिए यूवी अधिक।` : `UV is high for children.`);
       }
       if (maxG >= th.gustWatch && th.outdoor) {
         advice.push(currentLang === 'hi' ? `तेज़ झोंके — बाहरी सामान सुरक्षित करें।` : `Strong gusts — secure loose items outside.`);
@@ -1970,22 +2086,22 @@
       $('#commute-impact').innerHTML = `${t('commute_prefix')}: <span class="${color} font-semibold">${t(impact)}</span>`;
       const alerts = [];
       if (rain >= th.rainWarn) alerts.push({ icon:'rainy', title:t('alert_rain_heavy'), color:'error',
-        msg: currentLang === 'hi' ? `${rain}% बारिश. सावधानी।` : `${rain}% chance of rain. Plan for wet conditions.`,
-        why: th.resp ? (currentLang === 'hi' ? 'नमी दमे को बढ़ा सकती है।' : 'Humidity can trigger asthma — carry your inhaler.') : '' });
+        msg: currentLang === 'hi' ? `${rain}% बारिश.` : `${rain}% chance of rain.`,
+        why: th.resp ? (currentLang === 'hi' ? 'नमी दमे को बढ़ा सकती है।' : 'Humidity can trigger asthma.') : '' });
       else if (rain >= th.rainWatch) alerts.push({ icon:'rainy_light', title:t('alert_rain'), color:'secondary',
-        msg: currentLang === 'hi' ? `${rain}% बारिश. छाता रखें।` : `${rain}% chance of showers. Keep an umbrella handy.`, why: '' });
+        msg: currentLang === 'hi' ? `${rain}% बारिश. छाता रखें।` : `${rain}% chance of showers.`, why: '' });
       if (maxG >= th.gustWarn) alerts.push({ icon:'air', title:t('alert_wind'), color:'error',
-        msg: currentLang === 'hi' ? `${maxG} किमी/घं झोंके।` : `Gusts up to ${maxG} km/h. Secure loose objects.`,
-        why: th.outdoor ? (currentLang === 'hi' ? 'बाहरी काम रोकें।' : 'Pause outdoor work during gusts.') : '' });
+        msg: currentLang === 'hi' ? `${maxG} किमी/घं झोंके।` : `Gusts up to ${maxG} km/h.`,
+        why: th.outdoor ? (currentLang === 'hi' ? 'बाहरी काम रोकें।' : 'Pause outdoor work.') : '' });
       if (aqiVal !== null && aqiVal >= th.aqiWarn) alerts.push({ icon:'masks', title:t('alert_aqi'), color:'error',
-        msg: currentLang === 'hi' ? `AQI ${aqiVal} — अस्वस्थ। N95 पहनें।` : `AQI ${aqiVal} — unhealthy. Wear N95 outdoors.`,
-        why: th.resp ? (currentLang === 'hi' ? 'आपकी श्वसन प्रोफ़ाइल संवेदनशील है।' : 'Your respiratory profile is highly sensitive.') : '' });
+        msg: currentLang === 'hi' ? `AQI ${aqiVal} — अस्वस्थ।` : `AQI ${aqiVal} — unhealthy.`,
+        why: th.resp ? (currentLang === 'hi' ? 'आपकी श्वसन प्रोफ़ाइल संवेदनशील है।' : 'Your respiratory profile is sensitive.') : '' });
       else if (aqiVal !== null && aqiVal >= th.aqiWatch && th.resp) alerts.push({ icon:'masks', title:t('alert_aqi_watch'), color:'secondary',
         msg: currentLang === 'hi' ? `AQI ${aqiVal} — आपकी सीमा से ऊपर।` : `AQI ${aqiVal} — above your threshold.`,
         why: currentLang === 'hi' ? 'इस स्तर पर आप संवेदनशील हैं।' : 'You are sensitive at this level.' });
       if (feels >= th.heatWarn) alerts.push({ icon:'thermostat', title:t('alert_heat'), color:'error',
-        msg: currentLang === 'hi' ? `महसूस ${feels}°C. थकावट का खतरा।` : `Feels-like ${feels}°C. Risk of heat exhaustion.`,
-        why: th.fragile ? (currentLang === 'hi' ? 'बच्चे, वरिष्ठ, गर्भवती उच्च जोखिम में।' : 'Children, seniors, and pregnant individuals face higher risk.') : '' });
+        msg: currentLang === 'hi' ? `महसूस ${feels}°C.` : `Feels-like ${feels}°C.`,
+        why: th.fragile ? (currentLang === 'hi' ? 'बच्चे, वरिष्ठ, गर्भवती उच्च जोखिम में।' : 'Higher risk for children, seniors, pregnancy.') : '' });
       else if (feels >= th.heatWatch && th.fragile) alerts.push({ icon:'thermostat', title:t('alert_heat_watch'), color:'secondary',
         msg: currentLang === 'hi' ? `महसूस ${feels}°C — आपकी सीमा से ऊपर।` : `Feels-like ${feels}°C — above your threshold.`,
         why: currentLang === 'hi' ? 'अतिरिक्त जल और छाया।' : 'Extra water and shade recommended.' });
@@ -2028,7 +2144,7 @@
         const info = wInfo(h.weather_code[i]);
         const temp = Math.round(h.temperature_2m[i]);
         const rp = h.precipitation_probability[i] || 0;
-        const label = isNow ? t('today') : `${String(hr).padStart(2,'0')}:00`;
+        const label = isNow ? t('now') : `${String(hr).padStart(2,'0')}:00`;
         html += `
           <div class="flex flex-col items-center justify-between min-w-[68px] p-2.5 rounded-xl ${isNow?'bg-surface-container/90':'bg-surface-container-low/70'} shrink-0">
             <span class="font-label-data-sm ${isNow?'text-primary-fixed font-semibold':'text-on-surface-variant'}">${label}</span>
@@ -2155,7 +2271,7 @@
       const bNamesEn = ['Calm','Light Air','Light Breeze','Gentle Breeze','Moderate','Fresh','Strong','Near Gale','Gale','Strong Gale','Storm','Violent','Hurricane'];
       const bNamesHi = ['शांत','हल्की हवा','हल्की बयार','सौम्य बयार','मध्यम','तेज़','प्रबल','लगभग आंधी','आंधी','तेज़ आंधी','तूफ़ान','हिंसक','चक्रवात'];
       const bNames = currentLang === 'hi' ? bNamesHi : bNamesEn;
-      $('#beaufort').textContent = `${t('beaufort')} ${bf} • ${bNames[bf]}`;
+      $('#beaufort').textContent = `${t('beaufort')} ${bf} (${bNames[bf]})`;
       $('#wind-chill').textContent = `${t('wind_chill_label')}: ${Math.round(c.apparent_temperature)}°`;
       const svg = $('#flow-lines');
       let lines = '';
@@ -2175,6 +2291,8 @@
     function renderLightning(w) {
       const h = w.hourly;
       let maxCape = 0, minLI = 99, thunderProb = 0;
+      let upcomingThunder = false;
+      const next12 = Math.min(12, h.time.length);
       for (let i = 0; i < Math.min(24, h.time.length); i++) {
         const cape = h.cape?.[i] || 0;
         const li = h.lifted_index?.[i];
@@ -2182,49 +2300,68 @@
         const pp = h.precipitation_probability[i] || 0;
         if (cape > maxCape) maxCape = cape;
         if (li != null && li < minLI) minLI = li;
-        if (code === 95 || code === 96 || code === 99) thunderProb = Math.max(thunderProb, pp);
+        if (isThunderCode(code)) {
+          thunderProb = Math.max(thunderProb, pp);
+          if (i < next12) upcomingThunder = true;
+        }
       }
       $('#cape-value').textContent = Math.round(maxCape);
       $('#lifted-index').textContent = minLI < 99 ? minLI.toFixed(1) : '—';
-      $('#thunder-prob').textContent = Math.round(thunderProb || (maxCape > 1000 ? Math.min(100, maxCape/30) : 0));
-      $('#strike-rate').textContent = Math.round(maxCape > 500 ? maxCape/40 : 0);
-      let threat = currentLang === 'hi' ? 'कम' : 'Low';
-      let threatClass = 'bg-secondary-container/85';
-      if (maxCape > 2500) { threat = currentLang === 'hi' ? 'गंभीर' : 'Severe'; threatClass = 'bg-error-container/85'; }
-      else if (maxCape > 1500) { threat = currentLang === 'hi' ? 'उच्च' : 'High'; threatClass = 'bg-error-container/60'; }
-      else if (maxCape > 800) { threat = currentLang === 'hi' ? 'मध्यम' : 'Moderate'; }
-      else if (maxCape > 300) { threat = currentLang === 'hi' ? 'सीमांत' : 'Marginal'; }
+      $('#thunder-prob').textContent = Math.round(thunderProb);
+      $('#strike-rate').textContent = upcomingThunder ? Math.round(maxCape / 50) : 0;
+
+      let threat, threatClass = 'bg-secondary-container/85';
+      if (maxCape > 3500) { threat = currentLang === 'hi' ? 'गंभीर' : 'Severe'; threatClass = 'bg-error-container/85'; }
+      else if (maxCape > 2200) { threat = currentLang === 'hi' ? 'उच्च' : 'High'; threatClass = 'bg-error-container/60'; }
+      else if (maxCape > 1200) { threat = currentLang === 'hi' ? 'मध्यम' : 'Moderate'; }
+      else if (maxCape > 500) { threat = currentLang === 'hi' ? 'सीमांत' : 'Marginal'; }
+      else { threat = currentLang === 'hi' ? 'कम' : 'Low'; }
+
+      if (!upcomingThunder && maxCape < 2200) {
+        threat = currentLang === 'hi' ? 'कम' : 'Low';
+        threatClass = 'bg-secondary-container/85';
+      }
+
       const tEl = $('#storm-threat');
       tEl.textContent = `${t('threat')}: ${threat}`;
       tEl.parentElement.className = `absolute top-3 right-3 px-3 py-1.5 rounded-full ${threatClass} backdrop-blur-xl`;
+
       const layer = $('#strike-layer');
       let markers = '';
-      const numStrikes = Math.min(20, Math.floor(maxCape / 150));
-      for (let i = 0; i < numStrikes; i++) {
-        const r = 30 + Math.random() * 130;
-        const theta = Math.random() * Math.PI * 2;
-        const x = 180 + r * Math.cos(theta);
-        const y = 180 + r * Math.sin(theta);
-        markers += `<circle cx="${x}" cy="${y}" r="3.5" fill="#D0BCFF" opacity="0.8"/>
-                    <circle cx="${x}" cy="${y}" fill="none" stroke="#D0BCFF" stroke-width="1.2" r="6" class="strike-pulse"/>`;
+      if (upcomingThunder) {
+        const numStrikes = Math.min(20, Math.floor(maxCape / 200));
+        for (let i = 0; i < numStrikes; i++) {
+          const r = 30 + Math.random() * 130;
+          const theta = Math.random() * Math.PI * 2;
+          const x = 180 + r * Math.cos(theta);
+          const y = 180 + r * Math.sin(theta);
+          markers += `<circle cx="${x}" cy="${y}" r="3.5" fill="#D0BCFF" opacity="0.8"/>
+                      <circle cx="${x}" cy="${y}" fill="none" stroke="#D0BCFF" stroke-width="1.2" r="6" class="strike-pulse"/>`;
+        }
       }
       layer.innerHTML = markers;
+
       const li = minLI < 99 ? minLI.toFixed(1) : 'N/A';
       let brief = '';
-      if (currentLang === 'hi') {
-        if (maxCape > 2000) brief = `अत्यधिक अस्थिरता (CAPE ${Math.round(maxCape)} J/kg). गंभीर तूफ़ान संभव।`;
-        else if (maxCape > 1000) brief = `मध्यम-तेज़ अस्थिरता (CAPE ${Math.round(maxCape)}). तूफ़ान संभव।`;
-        else if (maxCape > 300) brief = `सीमांत अस्थिरता (CAPE ${Math.round(maxCape)}). कुछ तूफ़ान संभव।`;
-        else brief = `स्थिर वातावरण (CAPE ${Math.round(maxCape)}). कोई बड़ी गतिविधि नहीं।`;
-        brief += ` LI: ${li}. गरज: ${thunderProb}%.`;
+      if (!upcomingThunder) {
+        if (currentLang === 'hi') {
+          brief = `कोई तूफ़ान पूर्वानुमान में नहीं। वायुमंडलीय अस्थिरता ${Math.round(maxCape)} J/kg — निगरानी जारी, पर अभी कोई तूफ़ान नहीं बन रहा।`;
+        } else {
+          brief = `No thunderstorms currently forecast. Atmospheric instability is ${Math.round(maxCape)} J/kg — worth watching, but no storms are forming right now.`;
+        }
       } else {
-        if (maxCape > 2000) brief = `Extreme convective instability (CAPE ${Math.round(maxCape)} J/kg). Severe thunderstorms likely.`;
-        else if (maxCape > 1000) brief = `Moderate-to-strong instability (CAPE ${Math.round(maxCape)} J/kg). Thunderstorms possible.`;
-        else if (maxCape > 300) brief = `Marginal instability (CAPE ${Math.round(maxCape)} J/kg). Isolated thunderstorms possible.`;
-        else brief = `Stable atmosphere (CAPE ${Math.round(maxCape)} J/kg). No significant convection.`;
-        brief += ` LI: ${li}. Thunder probability: ${thunderProb}%.`;
+        if (currentLang === 'hi') {
+          if (maxCape > 2200) brief = `तेज़ तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg). सावधानी बरतें।`;
+          else if (maxCape > 1200) brief = `तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg).`;
+          else brief = `हल्के तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg).`;
+        } else {
+          if (maxCape > 2200) brief = `Strong thunderstorms possible (CAPE ${Math.round(maxCape)} J/kg). Stay alert.`;
+          else if (maxCape > 1200) brief = `Thunderstorms possible (CAPE ${Math.round(maxCape)} J/kg).`;
+          else brief = `Isolated thunderstorms possible (CAPE ${Math.round(maxCape)} J/kg).`;
+        }
+        brief += ` ${t('lifted_index')}: ${li}. ${t('thunder_prob')}: ${thunderProb}%.`;
       }
-      if (state.health.conditions.includes('asthma') && maxCape > 800) {
+      if (state.health.conditions.includes('asthma') && upcomingThunder) {
         brief += currentLang === 'hi' ? ' तूफ़ान के दौरान बाहर न जाएं।' : ' Avoid outdoor activity during storms.';
       }
       $('#lightning-brief').textContent = brief;
@@ -2276,7 +2413,7 @@
     $$('.nav-link').forEach(l => l.addEventListener('click', () => switchView(l.dataset.view)));
 
     // ============================================================
-    // MAIN LOADER
+    // MAIN LOADER (map init moved here so language toggle doesn't re-trigger it)
     // ============================================================
     async function loadAll(lat, lon, name) {
       state.lat = lat; state.lon = lon;
@@ -2291,10 +2428,28 @@
         renderWind(w);
         renderLightning(w);
         renderCyclone(lat, lon);
+        initRadar(lat, lon);
+        initAqiMap(lat, lon);
+        saveCache();
         showToast(t('updated_toast'), state.locationName);
       } catch (e) {
         console.error(e);
-        showToast(t('error_toast'), t('could_not_fetch'));
+        const cached = loadCache();
+        if (cached) {
+          state.weather = cached.weather;
+          state.airQuality = cached.aqi;
+          renderToday(cached.weather, cached.aqi);
+          render7Day(cached.weather);
+          renderWind(cached.weather);
+          renderLightning(cached.weather);
+          renderCyclone(state.lat, state.lon);
+          initRadar(state.lat, state.lon);
+          initAqiMap(state.lat, state.lon);
+          const mins = Math.round((Date.now() - cached.t) / 60000);
+          showToast(t('offline_toast'), t('cached_data_prefix') + mins + t('cached_data_suffix'));
+        } else {
+          showToast(t('error_toast'), t('could_not_fetch'));
+        }
       }
     }
 
@@ -2314,15 +2469,8 @@
       }, 2400);
     }
 
-    $('#location-btn').addEventListener('click', async () => {
-      showToast(t('detecting'), '');
-      try {
-        const pos = await getLiveLocation();
-        const name = await reverseGeocode(pos.lat, pos.lon);
-        await loadAll(pos.lat, pos.lon, name);
-      } catch(e) {
-        showToast(t('location_error'), 'Using default location');
-      }
+    $('#location-btn').addEventListener('click', () => {
+      openLocSheet();
     });
 
     $('#refresh-btn').addEventListener('click', () => loadAll(state.lat, state.lon, state.locationName));
@@ -2333,9 +2481,6 @@
       applyLanguage();
     });
 
-    // ============================================================
-    // APPLY LANGUAGE
-    // ============================================================
     function applyLanguage() {
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const val = t(el.dataset.i18n);
@@ -2388,7 +2533,6 @@
       const defaultY = window.innerHeight - 56 - 90;
       applyBubblePosition(defaultX, defaultY);
     }
-
     function applyBubblePosition(x, y) {
       const maxX = window.innerWidth - 56 - 8;
       const maxY = window.innerHeight - 56 - 8;
@@ -2399,19 +2543,16 @@
       chatBubble.style.right = 'auto';
       chatBubble.style.bottom = 'auto';
     }
-
     function saveBubblePosition() {
       const rect = chatBubble.getBoundingClientRect();
       try {
         localStorage.setItem(CHAT_POS_KEY, JSON.stringify({ x: rect.left, y: rect.top }));
       } catch (e) {}
     }
-
     let isDragging = false;
     let dragStartX = 0, dragStartY = 0;
     let bubbleStartX = 0, bubbleStartY = 0;
     let dragMoved = false;
-
     chatBubble.addEventListener('pointerdown', (e) => {
       isDragging = true;
       dragMoved = false;
@@ -2423,7 +2564,6 @@
       chatBubble.setPointerCapture(e.pointerId);
       chatBubble.style.transition = 'none';
     });
-
     chatBubble.addEventListener('pointermove', (e) => {
       if (!isDragging) return;
       const dx = e.clientX - dragStartX;
@@ -2431,7 +2571,6 @@
       if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragMoved = true;
       applyBubblePosition(bubbleStartX + dx, bubbleStartY + dy);
     });
-
     chatBubble.addEventListener('pointerup', (e) => {
       if (!isDragging) return;
       isDragging = false;
@@ -2445,7 +2584,6 @@
       saveBubblePosition();
       if (!dragMoved) openChat();
     });
-
     window.addEventListener('resize', () => {
       const rect = chatBubble.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -2469,7 +2607,6 @@
     }
     chatCloseBtn.addEventListener('click', closeChat);
     chatBackdrop.addEventListener('click', closeChat);
-
     let panelDragStartY = 0;
     let panelDragging = false;
     $('#chat-drag-handle').addEventListener('pointerdown', (e) => {
@@ -2479,10 +2616,10 @@
     });
     window.addEventListener('pointermove', (e) => {
       if (!panelDragging) return;
-      const dy = e.clientY - panelDragStartY;
-      if (dy > 0) chatPanel.style.transform = `translateY(${dy}px)`;
-    });
-    window.addEventListener('pointerup', (e) => {
+      const dy = e.client windowY - panelDragStartY;
+      if (dy > 0) chat.addEventListenerPanel.style.transform =(' `translateY(${dy}px)`;
+   pointer });
+   up', (e) => {
       if (!panelDragging) return;
       panelDragging = false;
       chatPanel.style.transition = '';
@@ -2506,7 +2643,6 @@
         localStorage.setItem(CHAT_HIST_KEY, JSON.stringify(trimmed));
       } catch (e) {}
     }
-
     function buildContextMessage() {
       const w = state.weather;
       const aqi = state.airQuality;
@@ -2535,7 +2671,6 @@
       }
       return ctx;
     }
-
     function renderChatMessages() {
       if (chatHistory.length === 0) {
         chatMessages.innerHTML = `
@@ -2570,7 +2705,6 @@
       });
       chatMessages.innerHTML = html;
     }
-
     function escapeHtml(s) {
       return String(s)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -2591,7 +2725,6 @@
     function scrollChatToBottom() {
       requestAnimationFrame(() => { chatMessages.scrollTop = chatMessages.scrollHeight; });
     }
-
     function autoGrowInput() {
       chatInput.style.height = 'auto';
       chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
@@ -2604,6 +2737,60 @@
       }
     });
     chatSendBtn.addEventListener('click', sendChatMessage);
+
+    // ============================================================
+    // LOCAL CHAT FALLBACK
+    // ============================================================
+    function localWeatherReply(text) {
+      const w = state.weather;
+      if (!w) return null;
+      const c = w.current, d = w.daily, h = w.hourly;
+      const hi = currentLang === 'hi';
+      const rain = d.precipitation_probability_max[0] || 0;
+      const feels = Math.round(c.apparent_temperature);
+      const aqiVal = state.airQuality?.current ? calcAQI(state.airQuality.current.pm2_5).v : null;
+      const q = text.toLowerCase();
+      const has = (...pats) => pats.some(p => q.includes(p));
+
+      const bestWalk = () => {
+        let best = 0, bestScore = Infinity;
+        for (let i = 0; i < 24 && i < h.time.length; i++) {
+          const pp = h.precipitation_probability[i] || 0;
+          const score = pp * 2 + Math.abs(h.temperature_2m[i] - 22);
+          if (score < bestScore) { bestScore = score; best = i; }
+        }
+        const bt = new Date(h.time[best]);
+        return { hr: bt.getHours(), pp: h.precipitation_probability[best] || 0, temp: Math.round(h.temperature_2m[best]) };
+      };
+
+      if (has('rain', 'baarish', 'बारिश', 'shower', 'barish'))
+        return hi ? `आज बारिश की संभावना ${rain}% है। ${rain > 60 ? 'छाता ज़रूर ले जाएं।' : rain > 30 ? 'हल्की बौछारें संभव हैं।' : 'बारिश की उम्मीद कम है।'}`
+                    : `Rain chance today is ${rain}%. ${rain > 60 ? 'Definitely carry an umbrella.' : rain > 30 ? 'A few showers are possible.' : 'Rain is unlikely.'}`;
+      if (has('umbrella', 'छाता'))
+        return rain > 60 ? (hi ? 'हां, छाता ले जाना बेहतर रहेगा।' : 'Yes, better take an umbrella.')
+             : rain > 30 ? (hi ? 'हल्की बौछारें संभव हैं — छोटा छाता रख लें।' : 'Showers are possible — a compact umbrella is a safe bet.')
+             : (hi ? 'शायद ही ज़रूरत पड़े, लेकिन हल्का वाटरप्रूफ जैकेट ठीक रहेगा।' : 'Probably not needed, but a light waterproof layer is a safe bet.');
+      if (has('walk', 'run', 'exercise', 'chal', 'टहल', 'ghum'))
+        { const b = bestWalk();
+          return hi ? `टहलने का अच्छा समय: लगभग ${b.hr}:00 — बारिश ${b.pp}%, तापमान ${b.temp}°C।`
+                    : `Best time for a walk: around ${b.hr}:00 — rain chance ${b.pp}%, ${b.temp}°C.`; }
+      if (has('air', 'aqi', 'hawa', 'हवा', 'saans', 'सांस'))
+        return aqiVal !== null
+          ? (hi ? `वायु गुणवत्ता सूचकांक ${aqiVal} है — ${aqiVal <= 100 ? 'सामान्य सक्रियता ठीक है।' : 'बाहर कम रहना बेहतर।'}${state.health.conditions.includes('asthma') ? ' आपकी श्वसन संवेदनशीलता के लिए मास्क उपयोगी है।' : ''}`
+                : `AQI is ${aqiVal} — ${aqiVal <= 100 ? 'normal outdoor activity is fine.' : 'limit prolonged outdoor exertion.'}${state.health.conditions.includes('asthma') ? ' Given your respiratory sensitivity, a mask helps.' : ''}`)
+          : (hi ? 'वायु गुणवत्ता डेटा उपलब्ध नहीं है।' : 'Air quality data is unavailable right now.');
+      if (has('hot', 'heat', 'garmi', 'गर्म', 'temper'))
+        return hi ? `अभी ${Math.round(c.temperature_2m)}°C, महसूस ${feels}°C। आज अधिकतम ${Math.round(d.temperature_2m_max[0])}° रहेगा।${feels >= 35 ? ' पानी पीते रहें।' : ''}`
+                  : `It's ${Math.round(c.temperature_2m)}°C now, feels like ${feels}°C. Today's high: ${Math.round(d.temperature_2m_max[0])}°.${feels >= 35 ? ' Stay hydrated.' : ''}`;
+      if (has('wind', 'storm', 'तूफ़ान', 'hawa'))
+        return hi ? `हवा ${Math.round(c.wind_speed_10m)} किमी/घं, झोंके ${Math.round(c.wind_gusts_10m)} तक।`
+                  : `Winds are ${Math.round(c.wind_speed_10m)} km/h with gusts up to ${Math.round(c.wind_gusts_10m)} km/h.`;
+      if (has('thunder', 'bijli', 'बिजली', 'lightning'))
+        return hi ? 'बिजली टैब में लाइव केप और तूफ़ान संभावना देखें।'
+                  : 'Check the Lightning tab for live CAPE and thunderstorm probability.';
+      return hi ? `अभी ${state.locationName} में ${Math.round(c.temperature_2m)}°C, ${wDesc(c.weather_code)}। आज ${Math.round(d.temperature_2m_min[0])}°–${Math.round(d.temperature_2m_max[0])}°, बारिश ${rain}%.`
+                : `Currently ${Math.round(c.temperature_2m)}°C and ${wDesc(c.weather_code)} in ${state.locationName}. Today: ${Math.round(d.temperature_2m_min[0])}°–${Math.round(d.temperature_2m_max[0])}°, rain chance ${rain}%.`;
+    }
 
     async function sendChatMessage() {
       if (isSending) return;
@@ -2630,8 +2817,13 @@
         const data = await res.json();
         hideTypingIndicator();
         if (!res.ok || !data.choices || !data.choices[0]) {
-          const errMsg = data?.error?.message || data?.error || (currentLang === 'hi' ? 'AI से संपर्क नहीं हो सका।' : 'Could not reach AI. Try again.');
-          chatHistory.push({ role: 'error', content: typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg) });
+          const fallback = localWeatherReply(text);
+          if (fallback) {
+            chatHistory.push({ role: 'assistant', content: fallback });
+          } else {
+            const errMsg = data?.error?.message || data?.error || (currentLang === 'hi' ? 'AI से संपर्क नहीं हो सका।' : 'Could not reach AI.');
+            chatHistory.push({ role: 'error', content: typeof errMsg === 'string' ? errMsg : JSON.stringify(errMsg) });
+          }
           saveChatHistory(); renderChatMessages(); scrollChatToBottom(); return;
         }
         const reply = data.choices[0].message?.content?.trim() || '(empty reply)';
@@ -2641,7 +2833,10 @@
         scrollChatToBottom();
       } catch (err) {
         hideTypingIndicator();
-        chatHistory.push({ role: 'error', content: currentLang === 'hi' ? 'नेटवर्क त्रुटि।' : 'Network error. Try again.' });
+        const fallback = localWeatherReply(text);
+        chatHistory.push(fallback
+          ? { role: 'assistant', content: fallback }
+          : { role: 'error', content: currentLang === 'hi' ? 'नेटवर्क त्रुटि।' : 'Network error.' });
         saveChatHistory(); renderChatMessages(); scrollChatToBottom();
       } finally {
         isSending = false;
@@ -2649,7 +2844,6 @@
         chatInput.focus();
       }
     }
-
     chatClearBtn.addEventListener('click', () => {
       if (confirm(t('clear_chat'))) {
         chatHistory = [];
@@ -2661,19 +2855,20 @@
     // ============================================================
     // INIT
     // ============================================================
-    applyTheme();
     loadHealth();
     loadChatPosition();
     loadChatHistory();
     applyLanguage();
 
     (async function init() {
+      const cached = loadCache();
       try {
         const pos = await getLiveLocation();
         const name = await reverseGeocode(pos.lat, pos.lon);
         await loadAll(pos.lat, pos.lon, name);
       } catch(e) {
-        await loadAll(28.6139, 77.2090, 'New Delhi');
+        if (cached) await loadAll(cached.lat, cached.lon, cached.name || 'Last known');
+        else await loadAll(28.6139, 77.2090, 'New Delhi');
       }
     })();
 
