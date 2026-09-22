@@ -1684,10 +1684,9 @@
       state.aqiTimer = setInterval(() => refreshAqiOverlay(state.lat, state.lon), 300000);
     }
 
-    async function refreshAqiOverlay(lat, lon) {
+   async function refreshAqiOverlay(lat, lon) {
       if (!state.aqiMap || !state.aqiLayer) return;
       try {
-        // Use a wider, denser grid to make blobs blend naturally
         const step = 0.7;
         const grid = [];
         for (let dy = -3; dy <= 3; dy++)
@@ -1713,38 +1712,72 @@
           points.push({ lat: grid[idx][0], lon: grid[idx][1], aqi });
         });
 
-        // Heatmap-style: draw each point as a semi-transparent soft circle.
-        // Overlapping circles blend to create a continuous-looking field.
-        const radiusMeters = 55000;
+        // Geographic bounds of the sample area (with a little padding)
+        const margin = 0.5;
+        const minLat = lat - 3 * step - margin;
+        const maxLat = lat + 3 * step + margin;
+        const minLon = lon - 3 * step - margin;
+        const maxLon = lon + 3 * step + margin;
+        const bounds = L.latLngBounds([minLat, minLon], [maxLat, maxLon]);
+
+        // Render heatmap onto an offscreen canvas — no visible circles, just gradients
+        const CANVAS_SIZE = 1024;
+        const canvas = document.createElement('canvas');
+        canvas.width = CANVAS_SIZE;
+        canvas.height = CANVAS_SIZE;
+        const ctx = canvas.getContext('2d');
+
+        const latSpan = maxLat - minLat;
+        const lonSpan = maxLon - minLon;
+
+        // Blur radius — how wide each sample bleeds into its neighbours.
+        // Higher = smoother, softer. Tune between 1.6 and 2.8.
+        const radiusPx = (step / lonSpan) * CANVAS_SIZE * 2.2;
+
         points.forEach(p => {
+          const x = ((p.lon - minLon) / lonSpan) * CANVAS_SIZE;
+          const y = ((maxLat - p.lat) / latSpan) * CANVAS_SIZE;
           const [r, g, b] = cpcbColorRGB(p.aqi);
-          const opacity = 0.18 + Math.min(0.28, p.aqi / 1800);
-          L.circle([p.lat, p.lon], {
-            radius: radiusMeters,
-            color: 'transparent',
-            fillColor: `rgb(${r},${g},${b})`,
-            fillOpacity: opacity,
-            weight: 0,
-            interactive: false
-          }).addTo(state.aqiLayer);
+
+          // Radial gradient from coloured core to transparent edge.
+          // Alpha scales gently with severity so worse areas pop.
+          const peakAlpha = 0.35 + Math.min(0.35, p.aqi / 800);
+          const grad = ctx.createRadialGradient(x, y, 0, x, y, radiusPx);
+          grad.addColorStop(0.0, `rgba(${r},${g},${b},${peakAlpha})`);
+          grad.addColorStop(0.45, `rgba(${r},${g},${b},${peakAlpha * 0.55})`);
+          grad.addColorStop(0.75, `rgba(${r},${g},${b},${peakAlpha * 0.18})`);
+          grad.addColorStop(1.0, `rgba(${r},${g},${b},0)`);
+
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, radiusPx, 0, Math.PI * 2);
+          ctx.fill();
         });
 
-        // Personal warning rings for AQI above user threshold
+        const dataUrl = canvas.toDataURL('image/png');
+        L.imageOverlay(dataUrl, bounds, {
+          opacity: 0.92,
+          interactive: false,
+          className: 'aqi-heatmap-layer'
+        }).addTo(state.aqiLayer);
+
+        // Personal threshold markers — thin dashed rings only where it matters
         points.forEach(p => {
           if (p.aqi >= thresholds.aqiWarn) {
             const [r, g, b] = cpcbColorRGB(p.aqi);
-            L.circle([p.lat, p.lon], {
-              radius: radiusMeters * 0.55,
+            L.circleMarker([p.lat, p.lon], {
+              radius: 6,
               color: `rgb(${r},${g},${b})`,
               fillColor: 'transparent',
               fillOpacity: 0,
               weight: 1.5,
-              dashArray: '4 4',
+              dashArray: '3 3',
               interactive: false
             }).addTo(state.aqiLayer);
           }
         });
 
+        // User location beacon on top
         L.circleMarker([lat, lon], {
           radius: 7, color: '#e0fdff', fillColor: '#00f2fe', fillOpacity: 1, weight: 2
         }).addTo(state.aqiLayer);
