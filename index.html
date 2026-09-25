@@ -2297,10 +2297,10 @@
     // ============================================================
     // RENDER: LIGHTNING — with stricter thresholds and clear-sky guard
     // ============================================================
-    function renderLightning(w) {
+     
+function renderLightning(w) {
       const h = w.hourly;
       let maxCape = 0, minLI = 99, thunderProb = 0;
-      // Track whether ANY upcoming hour (next 12) has an active thunder code
       let upcomingThunder = false;
       const next12 = Math.min(12, h.time.length);
       for (let i = 0; i < Math.min(24, h.time.length); i++) {
@@ -2320,18 +2320,24 @@
       $('#thunder-prob').textContent = Math.round(thunderProb);
       $('#strike-rate').textContent = upcomingThunder ? Math.round(maxCape / 50) : 0;
 
-      // Stricter threat thresholds (moderate level per user request)
+      // ============================================================
+      // THREAT LEVEL — only escalates when storms are ACTUALLY forecast.
+      // CAPE is just "potential"; without a thunderstorm code in the
+      // next 12h, the threat stays Low/Marginal regardless of CAPE.
+      // ============================================================
       let threat, threatClass = 'bg-secondary-container/85';
-      if (maxCape > 3500) { threat = currentLang === 'hi' ? 'गंभीर' : 'Severe'; threatClass = 'bg-error-container/85'; }
-      else if (maxCape > 2200) { threat = currentLang === 'hi' ? 'उच्च' : 'High'; threatClass = 'bg-error-container/60'; }
-      else if (maxCape > 1200) { threat = currentLang === 'hi' ? 'मध्यम' : 'Moderate'; }
-      else if (maxCape > 500) { threat = currentLang === 'hi' ? 'सीमांत' : 'Marginal'; }
-      else { threat = currentLang === 'hi' ? 'कम' : 'Low'; }
-
-      // If no storms are actually forming, cap the display threat
-      if (!upcomingThunder && maxCape < 2200) {
-        threat = currentLang === 'hi' ? 'कम' : 'Low';
-        threatClass = 'bg-secondary-container/85';
+      const hi = currentLang === 'hi';
+      if (upcomingThunder) {
+        // Storms forecast — escalate normally
+        if (maxCape > 3500) { threat = hi ? 'गंभीर' : 'Severe'; threatClass = 'bg-error-container/85'; }
+        else if (maxCape > 2200) { threat = hi ? 'उच्च' : 'High'; threatClass = 'bg-error-container/60'; }
+        else if (maxCape > 1200) { threat = hi ? 'मध्यम' : 'Moderate'; }
+        else if (maxCape > 500) { threat = hi ? 'सीमांत' : 'Marginal'; }
+        else { threat = hi ? 'कम' : 'Low'; }
+      } else {
+        // No storms forecast — cap threat. High CAPE alone isn't a threat.
+        if (maxCape > 2000) { threat = hi ? 'सीमांत' : 'Marginal'; }
+        else { threat = hi ? 'कम' : 'Low'; }
       }
 
       const tEl = $('#storm-threat');
@@ -2339,9 +2345,11 @@
       tEl.parentElement.className = `absolute top-3 right-3 px-3 py-1.5 rounded-full ${threatClass} backdrop-blur-xl`;
 
       const layer = $('#strike-layer');
-      let markers = '';
-      // Only draw strike markers if there's an actual thunderstorm in the forecast
+      const svgNS = 'http://www.w3.org/2000/svg';
+
       if (upcomingThunder) {
+        // Storms forecast — draw strike markers
+        let markers = '';
         const numStrikes = Math.min(20, Math.floor(maxCape / 200));
         for (let i = 0; i < numStrikes; i++) {
           const r = 30 + Math.random() * 130;
@@ -2351,21 +2359,30 @@
           markers += `<circle cx="${x}" cy="${y}" r="3.5" fill="#D0BCFF" opacity="0.8"/>
                       <circle cx="${x}" cy="${y}" fill="none" stroke="#D0BCFF" stroke-width="1.2" r="6" class="strike-pulse"/>`;
         }
+        layer.innerHTML = markers;
+      } else {
+        // No storms — show a clear "quiet" indicator instead of an empty radar
+        layer.innerHTML = `
+          <text x="180" y="176" text-anchor="middle" fill="#849495"
+                font-family="'JetBrains Mono', monospace" font-size="10"
+                letter-spacing="0.08em" font-weight="600">
+            ${hi ? 'कोई सक्रिय स्ट्राइक नहीं' : 'NO ACTIVE STRIKES'}
+          </text>
+          <text x="180" y="192" text-anchor="middle" fill="#5a6a6b"
+                font-family="'JetBrains Mono', monospace" font-size="8"
+                letter-spacing="0.06em">
+            ${hi ? 'निगरानी जारी' : 'Monitoring'}
+          </text>
+        `;
       }
-      layer.innerHTML = markers;
 
+      // ============================================================
+      // BRIEF — separates "potential" from "actual threat"
+      // ============================================================
       const li = minLI < 99 ? minLI.toFixed(1) : 'N/A';
       let brief = '';
-      if (!upcomingThunder) {
-        // No storms actually forecast — don't scare the user
-        if (currentLang === 'hi') {
-          brief = `कोई तूफ़ान पूर्वानुमान में नहीं। वायुमंडलीय अस्थिरता ${Math.round(maxCape)} J/kg — निगरानी जारी, पर अभी कोई तूफ़ान नहीं बन रहा।`;
-        } else {
-          brief = `No thunderstorms currently forecast. Atmospheric instability is ${Math.round(maxCape)} J/kg — worth watching, but no storms are forming right now.`;
-        }
-      } else {
-        // Storms are actually forecast
-        if (currentLang === 'hi') {
+      if (upcomingThunder) {
+        if (hi) {
           if (maxCape > 2200) brief = `तेज़ तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg). सावधानी बरतें।`;
           else if (maxCape > 1200) brief = `तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg).`;
           else brief = `हल्के तूफ़ान संभव (CAPE ${Math.round(maxCape)} J/kg).`;
@@ -2375,13 +2392,27 @@
           else brief = `Isolated thunderstorms possible (CAPE ${Math.round(maxCape)} J/kg).`;
         }
         brief += ` ${t('lifted_index')}: ${li}. ${t('thunder_prob')}: ${thunderProb}%.`;
+      } else {
+        // No storms — distinguish between "unstable but quiet" and "stable"
+        if (maxCape > 2000) {
+          brief = hi
+            ? `वायुमंडल अस्थिर है (CAPE ${Math.round(maxCape)} J/kg) — पर अभी कोई तूफ़ान नहीं बन रहा। निगरानी जारी, लेकिन तत्काल कोई खतरा नहीं।`
+            : `Atmosphere is unstable (CAPE ${Math.round(maxCape)} J/kg) — but no thunderstorms are forming right now. Worth monitoring, no immediate threat.`;
+        } else if (maxCape > 800) {
+          brief = hi
+            ? `हल्की अस्थिरता (CAPE ${Math.round(maxCape)} J/kg) — कोई तूफ़ान पूर्वानुमान में नहीं।`
+            : `Mild instability (CAPE ${Math.round(maxCape)} J/kg) — no thunderstorms forecast.`;
+        } else {
+          brief = hi
+            ? `स्थिर वातावरण (CAPE ${Math.round(maxCape)} J/kg) — कोई तूफ़ान नहीं।`
+            : `Stable atmosphere (CAPE ${Math.round(maxCape)} J/kg) — no thunderstorms forecast.`;
+        }
       }
       if (state.health.conditions.includes('asthma') && upcomingThunder) {
-        brief += currentLang === 'hi' ? ' तूफ़ान के दौरान बाहर न जाएं।' : ' Avoid outdoor activity during storms.';
+        brief += hi ? ' तूफ़ान के दौरान बाहर न जाएं।' : ' Avoid outdoor activity during storms.';
       }
       $('#lightning-brief').textContent = brief;
     }
-
     // ============================================================
     // RENDER: CYCLONE
     // ============================================================
